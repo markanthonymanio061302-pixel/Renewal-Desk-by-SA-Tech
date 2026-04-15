@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renewal Desk v3 — Developed by SA Tech</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#f0f2f0;--surface:#ffffff;--surface2:#f5f6f5;--surface3:#eceeed;
+--border:#e0e2e0;--border2:#c8ccc8;
+--text:#181f18;--text2:#5a6b5a;--text3:#8a9b8a;
+--accent:#2d5a27;--accent2:#3a7232;--accent3:#1e3d1a;
+--accent-bg:#eef5ec;--accent-border:#b8d4b4;
+--red:#b91c1c;--red-bg:#fef2f2;--red-border:#fecaca;
+--orange:#b45309;--orange-bg:#fffbeb;--orange-border:#fde68a;
+--green:#166534;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+--blue:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+--purple:#5b21b6;--purple-bg:#f5f3ff;--purple-border:#ddd6fe;
+--r:8px;--r2:12px;
+}
+[data-theme=dark]{
+--bg:#0d1210;--surface:#141a13;--surface2:#1a2219;--surface3:#202920;
+--border:#2a352a;--border2:#3a4a3a;
+--text:#e8f0e8;--text2:#8a9b8a;--text3:#5a6b5a;
+--accent-bg:#0f1f0d;--accent-border:#2d5a27;
+--red-bg:#1f0808;--red-border:#7f1d1d;
+--orange-bg:#1c1000;--orange-border:#78350f;
+--green-bg:#052011;--green-border:#14532d;
+--blue-bg:#060f2a;--blue-border:#1e3a8a;
+--purple-bg:#120b2a;--purple-border:#3b0764;
+}
+html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:212px;min-width:212px;background:var(--accent);display:flex;flex-direction:column}
+.logo{padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,.12)}
+.logo-mark{display:flex;align-items:center;gap:9px}
+.logo-icon{width:30px;height:30px;background:rgba(255,255,255,.18);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-text{color:#fff;font-size:13px;font-weight:600;line-height:1.2}
+.logo-sub{color:rgba(255,255,255,.45);font-size:10px;margin-top:1px}
+.nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-label{padding:10px 14px 3px;color:rgba(255,255,255,.32);font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;color:rgba(255,255,255,.68);font-size:12px;transition:.12s;border-left:2px solid transparent}
+.ni:hover{background:rgba(255,255,255,.09);color:#fff}
+.ni.active{background:rgba(255,255,255,.15);color:#fff;border-left-color:rgba(255,255,255,.8)}
+.ni-ic{width:14px;font-size:12px;text-align:center;flex-shrink:0}
+.ni-badge{margin-left:auto;background:#dc2626;color:#fff;font-size:9px;padding:1px 5px;border-radius:10px;font-weight:700}
+.theme-toggle{margin:10px;padding:8px 10px;background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.75);border-radius:var(--r);cursor:pointer;font-size:11px;font-family:inherit;display:flex;align-items:center;gap:7px;transition:.12s}
+.theme-toggle:hover{background:rgba(255,255,255,.18);color:#fff}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;flex-shrink:0}
+.tb-title{font-size:14px;font-weight:600;flex:1;color:var(--text)}
+.tb-alert{background:var(--red-bg);color:var(--red);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;border:1px solid var(--red-border)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:.12s;font-family:inherit;line-height:1}
+.btn-p{background:var(--accent);color:#fff}.btn-p:hover{background:var(--accent2)}
+.btn-s{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}.btn-s:hover{background:var(--surface3);color:var(--text)}
+.btn-xs{padding:5px 10px;font-size:11px}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.content{flex:1;overflow-y:auto;padding:18px}
+.page{display:none}.page.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:13px 15px}
+.sc-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.sc-val{font-size:26px;font-weight:700;line-height:1}
+.sc-sub{font-size:10px;color:var(--text3);margin-top:3px}
+.sc-accent .sc-val{color:var(--accent)}.sc-red .sc-val{color:var(--red)}.sc-orange .sc-val{color:var(--orange)}.sc-green2 .sc-val{color:var(--green)}
+.view-tabs{display:flex;gap:3px;margin-bottom:14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:3px;width:fit-content}
+.vt{padding:5px 13px;border-radius:6px;cursor:pointer;font-size:12px;color:var(--text2);transition:.12s;border:none;background:transparent;font-family:inherit}
+.vt.active{background:var(--surface);color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sw{flex:1;min-width:160px;position:relative}
+.sw input{width:100%;padding:7px 10px 7px 28px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);outline:none}
+.sw input:focus{border-color:var(--accent)}
+.sw-ic{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:12px;pointer-events:none}
+.flt{padding:7px 9px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);outline:none;cursor:pointer}
+.flt:focus{border-color:var(--accent)}
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:680px}
+th{background:var(--surface2);padding:8px 11px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 11px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;cursor:pointer}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.b-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.b-orange{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border)}
+.b-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.b-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.b-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.b-accent{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border)}
+.act-btn{padding:3px 7px;border-radius:5px;font-size:10px;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:.1s}
+.a-renew{background:var(--green-bg);color:var(--green)}.a-renew:hover{background:var(--green-border)}
+.a-edit{background:var(--blue-bg);color:var(--blue)}.a-edit:hover{background:var(--blue-border)}
+.a-view{background:var(--accent-bg);color:var(--accent)}.a-view:hover{background:var(--accent-border)}
+.a-del{background:var(--red-bg);color:var(--red)}.a-del:hover{background:var(--red-border)}
+.bulk-bar{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--r);padding:8px 12px;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bulk-bar span{font-size:12px;color:var(--accent);font-weight:500;flex:1}
+.kanban{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kb-col{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:10px}
+.kb-header{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.kb-count{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1px 6px;font-size:10px;color:var(--text2)}
+.kb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;margin-bottom:6px;cursor:pointer;transition:.1s}
+.kb-card:hover{border-color:var(--border2)}
+.kb-title{font-size:12px;font-weight:500;margin-bottom:3px}
+.kb-meta{font-size:10px;color:var(--text3)}
+.cal-grid{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.cal-title{font-size:13px;font-weight:600}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
+.cal-day-lbl{padding:6px;text-align:center;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-cell{min-height:66px;padding:4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.cal-cell:nth-child(7n){border-right:none}
+.cal-num{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:2px;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+.cal-num.today{background:var(--accent);color:#fff;border-radius:50%;font-size:10px}
+.cal-ev{background:var(--red-bg);color:var(--red);border-radius:3px;padding:1px 4px;margin-bottom:1px;font-size:9px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.cal-ev.soon{background:var(--orange-bg);color:var(--orange)}
+.cal-ev.ok{background:var(--green-bg);color:var(--green)}
+.cal-other{opacity:.3}
+.tl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.tl-hdr{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface2);font-size:11px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px}
+.tl-row{display:flex;align-items:center;padding:5px 14px;border-bottom:1px solid var(--border);gap:10px}
+.tl-row:last-child{border-bottom:none}
+.tl-lbl{width:155px;font-size:11px;font-weight:500;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.tl-track{flex:1;height:18px;background:var(--surface3);border-radius:3px;overflow:hidden;position:relative}
+.tl-bar{height:100%;border-radius:3px;position:absolute;display:flex;align-items:center;padding:0 5px;font-size:9px;color:#fff;font-weight:500;overflow:hidden;min-width:4px}
+.tl-now{position:absolute;top:0;bottom:0;width:1px;background:var(--accent);z-index:2}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:10px}
+.cg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;cursor:pointer;transition:.12s}
+.cg-card:hover{border-color:var(--border2);background:var(--surface2)}
+.cg-card.expired{border-left:3px solid var(--red)}
+.cg-card.warn7{border-left:3px solid var(--orange)}
+.cg-card.warn30{border-left:3px solid #d97706}
+.cg-cat{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.cg-title{font-size:13px;font-weight:600;margin-bottom:5px;line-height:1.3;color:var(--text)}
+.cg-expiry{font-size:11px;color:var(--text2);font-family:monospace}
+.cg-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:7px;border-top:1px solid var(--border)}
+.fin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.fin-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:13px 15px}
+.fin-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.fin-val{font-size:22px;font-weight:700;color:var(--accent)}
+.fin-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.bar-chart{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px}
+.bc-title{font-size:12px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.bc-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bc-lbl{width:120px;font-size:11px;color:var(--text2);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc-track{flex:1;height:14px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.bc-fill{height:100%;background:var(--accent);border-radius:3px;transition:.3s}
+.bc-val{font-size:10px;color:var(--text2);width:72px;text-align:right;flex-shrink:0}
+.audit-item{display:flex;gap:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px}
+.audit-ic{width:28px;height:28px;border-radius:50%;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.audit-body{flex:1}
+.audit-action{font-size:12px;font-weight:500;color:var(--text)}
+.audit-time{font-size:10px;color:var(--text3);font-family:monospace;margin-top:1px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal{background:var(--surface);border-radius:var(--r2);width:100%;max-width:540px;max-height:92vh;overflow-y:auto;border:1px solid var(--border)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.mh-title{font-size:14px;font-weight:600;color:var(--text)}
+.mc{padding:14px 18px}
+.mf{padding:10px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:11px;font-weight:500;color:var(--text2)}
+.fg input,.fg select,.fg textarea{padding:7px 9px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);outline:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{resize:vertical;min-height:54px}
+.ds-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.ds-row{display:flex;gap:8px;margin-bottom:5px;font-size:12px}
+.ds-key{color:var(--text2);width:110px;flex-shrink:0}
+.ds-val{color:var(--text);font-weight:500}
+.th-item{position:relative;margin-bottom:10px;padding-left:14px;border-left:2px solid var(--border)}
+.th-dot{position:absolute;left:-5px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.th-date{font-size:10px;color:var(--text3);font-family:monospace}
+.th-act{font-size:12px;font-weight:500;margin-top:1px;color:var(--text)}
+.ss{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:12px}
+.ss-title{font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.chk-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text)}
+.popup-bg{position:fixed;inset:0;background:rgba(0,0,0,.48);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+.popup{background:var(--surface);border-radius:var(--r2);width:100%;max-width:450px;border:1px solid var(--border)}
+.ph{background:var(--red-bg);padding:13px 18px;border-radius:var(--r2) var(--r2) 0 0;border-bottom:1px solid var(--red-border)}
+.ph-title{font-size:14px;font-weight:600;color:var(--red);margin-bottom:2px}
+.ph-sub{font-size:11px;color:var(--orange)}
+.pl{padding:10px 18px;max-height:200px;overflow-y:auto}
+.pi{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.pi:last-child{border-bottom:none}
+.pf{padding:10px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.empty{text-align:center;padding:30px;color:var(--text3);font-size:12px}
+
+/* ── TOAST NOTIFICATIONS ── */
+#toast-container{position:fixed;top:14px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:var(--r);font-size:12px;font-weight:500;min-width:220px;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.18);pointer-events:auto;animation:toastIn .22s ease;border:1px solid transparent}
+.toast-success{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.toast-error{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.toast-info{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)}
+.toast-warn{background:var(--orange-bg);color:var(--orange);border-color:var(--orange-border)}
+.toast-ic{font-size:14px;flex-shrink:0}
+.toast-msg{flex:1;line-height:1.4}
+.toast-close{background:none;border:none;cursor:pointer;opacity:.5;font-size:13px;padding:0;color:inherit;flex-shrink:0}
+.toast-close:hover{opacity:1}
+@keyframes toastIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(24px)}}
+
+/* ── DONUT CHART ── */
+.donut-wrap{display:flex;align-items:center;gap:14px}
+.donut-svg{flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:5px;min-width:0}
+.dl-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dl-val{font-weight:600;color:var(--text);margin-left:auto;padding-left:8px}
+
+/* ── DASHBOARD UPGRADE ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px}
+.dash-card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.dash-card-link{font-size:10px;font-weight:500;color:var(--accent);cursor:pointer;text-transform:none;letter-spacing:0}
+.dash-card-link:hover{text-decoration:underline}
+.upcoming-item{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border)}
+.upcoming-item:last-child{border-bottom:none}
+.upcoming-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.upcoming-title{font-size:12px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.upcoming-meta{font-size:10px;color:var(--text3);font-family:monospace;flex-shrink:0}
+
+/* ── SUBSCRIPTIONS MODULE ── */
+.sub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.sub-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px;cursor:pointer;transition:.12s;position:relative}
+.sub-card:hover{border-color:var(--border2);background:var(--surface2)}
+.sub-card.expired{border-left:3px solid var(--red)}
+.sub-card.warn7{border-left:3px solid var(--orange)}
+.sub-card.warn30{border-left:3px solid #d97706}
+.sub-card.active{border-left:3px solid var(--green)}
+.sub-vendor{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.sub-name{font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}
+.sub-price{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.sub-price span{font-size:11px;font-weight:400;color:var(--text3)}
+.sub-footer{display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding-top:7px;border-top:1px solid var(--border)}
+.sub-actions{display:flex;gap:3px;margin-top:8px}
+.sub-cycle-badge{font-size:9px;background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border);padding:2px 6px;border-radius:10px;font-weight:600}
+
+/* ── PRINT STYLES ── */
+@media print{
+  .sidebar,.topbar,.toolbar,.view-tabs,.bulk-bar,.modal-bg,.popup-bg,#toast-container,.act-btn,.btn,.theme-toggle{display:none!important}
+  .app{display:block!important;height:auto!important}
+  .main{overflow:visible!important;height:auto!important}
+  .content{overflow:visible!important;padding:0!important}
+  .page{display:block!important}
+  .page:not(.active){display:none!important}
+  .tbl-wrap{overflow:visible!important;box-shadow:none!important;border:1px solid #ccc!important}
+  table{min-width:unset!important}
+  .print-header{display:block!important}
+  body{font-size:11px!important}
+}
+.print-header{display:none;margin-bottom:12px}
+
+/* ── FORM VALIDATION ── */
+.fg input.invalid,.fg select.invalid,.fg textarea.invalid{border-color:var(--red)!important;background:var(--red-bg)}
+.fg .field-error{font-size:10px;color:var(--red);margin-top:2px;display:none}
+.fg .field-error.show{display:block}
+
+/* ── SEARCH HIGHLIGHT ── */
+mark{background:rgba(45,90,39,.18);color:inherit;border-radius:2px;padding:0 1px}
+
+/* ── NOTIFICATION BELL ── */
+.notif-btn{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;cursor:pointer;font-size:13px;line-height:1;color:var(--text2);transition:.12s}
+.notif-btn:hover{background:var(--surface3);color:var(--text)}
+.notif-dot{position:absolute;top:-3px;right:-3px;width:9px;height:9px;background:#dc2626;border-radius:50%;border:2px solid var(--surface);display:none}
+.notif-dot.show{display:block}
+
+/* ── MINI PROGRESS BAR ON STAT CARDS ── */
+.sc-bar{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.sc-bar-fill{height:100%;border-radius:2px;transition:.4s}
+</style>
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="app" id="app">
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="7" height="7" rx="1.5" fill="white" opacity="0.9"/>
+            <rect x="10" y="1" width="7" height="7" rx="1.5" fill="white" opacity="0.5"/>
+            <rect x="1" y="10" width="7" height="7" rx="1.5" fill="white" opacity="0.5"/>
+            <rect x="10" y="10" width="7" height="7" rx="1.5" fill="white" opacity="0.9"/>
+            <circle cx="9" cy="9" r="2" fill="white" opacity="1"/>
+          </svg>
+        </div>
+        <div><div class="logo-text">Renewal Desk</div><div class="logo-sub">Developed by SA Tech</div></div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Overview</div>
+      <div class="ni active" onclick="go('dashboard',this)"><span class="ni-ic">&#9672;</span>Dashboard<span class="ni-badge" id="nb" style="display:none">0</span></div>
+      <div class="nav-label">Renewals</div>
+      <div class="ni" onclick="go('renewals',this)"><span class="ni-ic">&#8635;</span>All Renewals</div>
+      <div class="ni" onclick="go('renewals',this);setF('LTO / Vehicle')"><span class="ni-ic">&#183;</span>LTO / Vehicle</div>
+      <div class="ni" onclick="go('renewals',this);setF('Insurance')"><span class="ni-ic">&#183;</span>Insurance</div>
+      <div class="ni" onclick="go('renewals',this);setF('Business Permit')"><span class="ni-ic">&#183;</span>Business Permits</div>
+      <div class="ni" onclick="go('renewals',this);setF('Contract')"><span class="ni-ic">&#183;</span>Contracts</div>
+      <div class="ni" onclick="go('renewals',this);setF('Equipment')"><span class="ni-ic">&#183;</span>Equipment</div>
+      <div class="ni" onclick="go('renewals',this);setF('License / Cert')"><span class="ni-ic">&#183;</span>Licenses &amp; Certs</div>
+      <div class="ni" onclick="go('renewals',this);setF('Employee Doc')"><span class="ni-ic">&#183;</span>Employee Docs</div>
+      <div class="nav-label">Agency</div>
+      <div class="ni" onclick="go('agency',this)"><span class="ni-ic">&#128100;</span>All Employees</div>
+      <div class="ni" onclick="go('agency',this);setAF('Employment Contract')"><span class="ni-ic">&#183;</span>Employment Contracts</div>
+      <div class="ni" onclick="go('agency',this);setAF('Government ID')"><span class="ni-ic">&#183;</span>Government IDs</div>
+      <div class="ni" onclick="go('agency',this);setAF('Professional License')"><span class="ni-ic">&#183;</span>Professional Licenses</div>
+      <div class="ni" onclick="go('agency',this);setAF('Medical Certificate')"><span class="ni-ic">&#183;</span>Medical Certificates</div>
+      <div class="ni" onclick="go('agency',this);setAF('NBI / Police Clearance')"><span class="ni-ic">&#183;</span>NBI / Clearances</div>
+      <div class="nav-label">Health Insurance</div>
+      <div class="ni" onclick="go('health',this)"><span class="ni-ic">&#10010;</span>All Members</div>
+      <div class="ni" onclick="go('health',this);setHF('HMO')"><span class="ni-ic">&#183;</span>HMO</div>
+      <div class="ni" onclick="go('health',this);setHF('Life Insurance')"><span class="ni-ic">&#183;</span>Life Insurance</div>
+      <div class="ni" onclick="go('health',this);setHF('Personal Accident')"><span class="ni-ic">&#183;</span>Personal Accident</div>
+      <div class="ni" onclick="go('health',this);setHF('Group Health')"><span class="ni-ic">&#183;</span>Group Health</div>
+      <div class="nav-label">Credit Cards</div>
+      <div class="ni" onclick="go('creditcards',this)"><span class="ni-ic">&#9646;</span>All Credit Cards</div>
+      <div class="nav-label">Subscriptions</div>
+      <div class="ni" onclick="go('subscriptions',this)"><span class="ni-ic">&#9632;</span>All Subscriptions</div>
+      <div class="nav-label">Analytics</div>
+      <div class="ni" onclick="go('finance',this)"><span class="ni-ic">$</span>Cost &amp; Forecast</div>
+      <div class="nav-label">System</div>
+      <div class="ni" onclick="go('import',this)"><span class="ni-ic">&#8679;</span>Import</div>
+      <div class="ni" onclick="go('audit',this)"><span class="ni-ic">&#8801;</span>Audit Log</div>
+      <div class="ni" onclick="go('settings',this)"><span class="ni-ic">&#9881;</span>Settings</div>
+    </nav>
+    <button class="theme-toggle" onclick="toggleTheme()"><span id="th-ic">&#9681;</span><span id="th-lbl">Dark mode</span></button>
+    <div style="padding:8px 14px 12px;text-align:center;border-top:1px solid rgba(255,255,255,.08);margin-top:2px">
+      <div style="font-size:10px;color:rgba(255,255,255,.3);line-height:1.5">&#169; 2026 SA Tech</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:1px">Renewal Desk v3.0 — Live</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-title" id="tb-title">Dashboard</div>
+      <span class="tb-alert" id="tb-alert" style="display:none"></span>
+      <span id="sync-status" style="font-size:10px;color:var(--text3);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <button class="notif-btn" onclick="showPopup()" title="View expiry alerts"><span>&#128276;</span><span class="notif-dot" id="notif-dot"></span></button>
+      <button class="btn btn-s btn-xs" onclick="pullAllFromSheets()" title="Force refresh from Google Sheets">&#8635; Sync</button>
+      <button class="btn btn-s btn-xs" onclick="doPrint()" title="Print current view">&#128438; Print</button>
+      <button class="btn btn-s btn-xs" onclick="exportCSV()">&#8595; CSV</button>
+      <button class="btn btn-p btn-xs" onclick="openAdd()">+ Add Renewal</button>
+    </div>
+    <div class="content">
+
+      <div class="page active" id="page-dashboard">
+        <div class="print-header"><strong>Renewal Desk — Dashboard</strong> &nbsp;|&nbsp; <span id="ph-date"></span></div>
+        <div class="stats-row" id="d-stats"></div>
+        <div class="dash-grid">
+          <div class="dash-card" id="d-donut-card">
+            <div class="dash-card-title">Status Overview <span class="dash-card-link" onclick="go('renewals',null)">View all →</span></div>
+            <div id="d-donut"></div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-card-title">Upcoming Renewals <span class="dash-card-link" onclick="go('renewals',null)">See all →</span></div>
+            <div id="d-upcoming"></div>
+          </div>
+        </div>
+        <div id="d-alerts"></div>
+        <div style="margin-top:14px"><div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text2)">Recent renewals</div><div id="d-recent"></div></div>
+      </div>
+
+      <div class="page" id="page-renewals">
+        <div class="view-tabs">
+          <button class="vt active" onclick="setView('table',this)">Table</button>
+          <button class="vt" onclick="setView('kanban',this)">Visual Board</button>
+          <button class="vt" onclick="setView('calendar',this)">Calendar</button>
+          <button class="vt" onclick="setView('timeline',this)">Timeline</button>
+          <button class="vt" onclick="setView('cards',this)">Cards</button>
+        </div>
+        <div class="toolbar">
+          <div class="sw"><span class="sw-ic">&#8981;</span><input type="text" id="srch" placeholder="Search title, ref, unit code..." oninput="renderView()"></div>
+          <select class="flt" id="flt-cat" onchange="renderView()">
+            <option value="">All Categories</option>
+            <option>LTO / Vehicle</option><option>Insurance</option><option>Business Permit</option>
+            <option>Contract</option><option>Subscription</option><option>Equipment</option>
+            <option>License / Cert</option><option>Employee Doc</option><option>Custom</option>
+          </select>
+          <select class="flt" id="flt-ent" onchange="renderView()"><option value="">All Entities</option></select>
+          <select class="flt" id="flt-st" onchange="renderView()">
+            <option value="">All Statuses</option>
+            <option value="expired">Expired</option><option value="warn7">&#8804;7 days</option>
+            <option value="warn30">&#8804;30 days</option><option value="active">Active</option>
+          </select>
+        </div>
+        <div id="bulk-bar" style="display:none" class="bulk-bar">
+          <span id="bulk-ct">0 selected</span>
+          <button class="btn btn-p btn-xs" onclick="bulkRenew()">&#8635; Bulk Renew</button>
+          <button class="btn btn-danger btn-xs" onclick="bulkDelete()">&#10005; Delete</button>
+          <button class="btn btn-s btn-xs" onclick="clearSel()">Clear</button>
+        </div>
+        <div id="view-area"></div>
+      </div>
+
+      <!-- SUBSCRIPTIONS PAGE -->
+      <div class="page" id="page-subscriptions">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)">Subscriptions</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Track recurring software, cloud, media, and membership subscriptions</div>
+          </div>
+          <button class="btn btn-p btn-xs" onclick="openAddSub()">+ Add Subscription</button>
+        </div>
+        <div class="stats-row" id="sub-stats"></div>
+        <div class="view-tabs">
+          <button class="vt active" onclick="setSubView('cards',this)">Cards</button>
+          <button class="vt" onclick="setSubView('table',this)">Table</button>
+        </div>
+        <div class="toolbar">
+          <div class="sw"><span class="sw-ic">&#8981;</span><input type="text" id="sub-srch" placeholder="Search name, vendor, category..." oninput="renderSubscriptions()"></div>
+          <select class="flt" id="sub-flt-cat" onchange="renderSubscriptions()">
+            <option value="">All Categories</option>
+          </select>
+          <select class="flt" id="sub-flt-cycle" onchange="renderSubscriptions()">
+            <option value="">All Billing Cycles</option>
+            <option>Monthly</option>
+            <option>Quarterly</option>
+            <option>Semi-annual</option>
+            <option>Yearly</option>
+          </select>
+          <select class="flt" id="sub-flt-st" onchange="renderSubscriptions()">
+            <option value="">All Statuses</option>
+            <option value="expired">Expired</option>
+            <option value="warn7">≤7 days</option>
+            <option value="warn30">≤30 days</option>
+            <option value="active">Active</option>
+          </select>
+        </div>
+        <div id="sub-view"></div>
+      </div>
+
+      <div class="page" id="page-finance">
+        <div class="fin-grid" id="fin-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div class="bar-chart" id="fc-cat"></div>
+          <div class="bar-chart" id="fc-month"></div>
+        </div>
+        <div class="bar-chart" id="fc-sub"></div>
+      </div>
+
+      <div class="page" id="page-agency">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)">Agency — Employee Requirements</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Track expiry of contracts, licenses, IDs and clearances per employee</div>
+          </div>
+          <button class="btn btn-p btn-xs" onclick="openAddEmp()">+ Add Employee Record</button>
+        </div>
+        <div class="stats-row" id="ag-stats"></div>
+        <div class="toolbar">
+          <div class="sw"><span class="sw-ic">&#8981;</span><input type="text" id="ag-srch" placeholder="Search name, ID, position..." oninput="renderAgency()"></div>
+          <select class="flt" id="ag-flt-type" onchange="renderAgency()">
+            <option value="">All Requirement Types</option>
+            <option>Employment Contract</option>
+            <option>Government ID</option>
+            <option>Professional License</option>
+            <option>Medical Certificate</option>
+            <option>NBI / Police Clearance</option>
+            <option>Other</option>
+          </select>
+          <select class="flt" id="ag-flt-dept" onchange="renderAgency()">
+            <option value="">All Departments</option>
+          </select>
+          <select class="flt" id="ag-flt-st" onchange="renderAgency()">
+            <option value="">All Statuses</option>
+            <option value="expired">Expired</option>
+            <option value="warn7">&#8804;7 days</option>
+            <option value="warn30">&#8804;30 days</option>
+            <option value="active">Active</option>
+          </select>
+        </div>
+        <div id="ag-view"></div>
+      </div>
+
+      <!-- HEALTH INSURANCE PAGE -->
+      <div class="page" id="page-health">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)">Health Insurance</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Personal health coverage for owner's family &amp; key executives — not linked to Agency</div>
+          </div>
+          <button class="btn btn-p btn-xs" onclick="openAddHI()">+ Add Member Insurance</button>
+        </div>
+        <div class="stats-row" id="hi-stats"></div>
+        <div class="toolbar">
+          <div class="sw"><span class="sw-ic">&#8981;</span><input type="text" id="hi-srch" placeholder="Search name, provider, policy no..." oninput="renderHealth()"></div>
+          <select class="flt" id="hi-flt-type" onchange="renderHealth()">
+            <option value="">All Types</option>
+            <option>HMO</option><option>Life Insurance</option>
+            <option>Personal Accident</option><option>Group Health</option>
+          </select>
+          <select class="flt" id="hi-flt-rel" onchange="renderHealth()">
+            <option value="">All Relationships</option>
+            <option>Owner</option><option>Spouse</option><option>Child</option>
+            <option>Parent</option><option>Sibling</option><option>Key Executive</option><option>Other</option>
+          </select>
+          <select class="flt" id="hi-flt-st" onchange="renderHealth()">
+            <option value="">All Statuses</option>
+            <option value="expired">Expired</option>
+            <option value="warn7">&#8804;7 days</option>
+            <option value="warn30">&#8804;30 days</option>
+            <option value="active">Active</option>
+          </select>
+        </div>
+        <div id="hi-view"></div>
+      </div>
+
+      <!-- CREDIT CARDS PAGE -->
+      <div class="page" id="page-creditcards">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text)">Credit Cards</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">Track card expiry and annual fee renewal schedules</div>
+          </div>
+          <button class="btn btn-p btn-xs" onclick="openAddCC()">+ Add Credit Card</button>
+        </div>
+        <div class="stats-row" id="cc-stats"></div>
+        <div class="toolbar">
+          <div class="sw"><span class="sw-ic">&#8981;</span><input type="text" id="cc-srch" placeholder="Search card name, bank, cardholder..." oninput="renderCreditCards()"></div>
+          <select class="flt" id="cc-flt-bank" onchange="renderCreditCards()">
+            <option value="">All Banks</option>
+          </select>
+          <select class="flt" id="cc-flt-st" onchange="renderCreditCards()">
+            <option value="">All Statuses</option>
+            <option value="expired">Expired</option>
+            <option value="warn7">&#8804;7 days</option>
+            <option value="warn30">&#8804;30 days</option>
+            <option value="active">Active</option>
+          </select>
+        </div>
+        <div id="cc-view"></div>
+      </div>
+
+      <div class="page" id="page-import">
+        <div style="max-width:460px">
+          <div style="border:2px dashed var(--border2);border-radius:var(--r2);padding:24px;text-align:center;cursor:pointer;background:var(--surface);transition:.15s" onclick="document.getElementById('csv-in').click()" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border2)'">
+            <div style="font-size:28px;margin-bottom:8px;color:var(--accent)">&#8615;</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)">Upload CSV / Excel export</div>
+            <div style="font-size:11px;color:var(--text2)">Columns: Title, Category, Entity, Department, StartDate, ExpiryDate, Cycle, Cost, Paid, RefNo, UnitCode, Agency, Notes</div>
+          </div>
+          <input type="file" id="csv-in" accept=".csv" style="display:none" onchange="importCSV(this)">
+          <div id="import-msg" style="margin-top:10px"></div>
+          <div style="margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px 14px">
+            <div style="font-size:11px;font-weight:600;margin-bottom:6px;color:var(--text)">Sample CSV format</div>
+            <pre style="font-size:10px;color:var(--text2);overflow-x:auto;font-family:monospace;white-space:pre;line-height:1.6">Title,Category,Entity,Department,StartDate,ExpiryDate,Cycle,Cost,Paid,RefNo,UnitCode,Agency,Notes
+LTO Plate-1234,LTO / Vehicle,Company A,Operations,2024-01-01,2025-01-01,Yearly,850,Yes,REF-001,EQ-001,LTO,</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="page-audit"><div id="audit-list"></div></div>
+
+      <div class="page" id="page-settings">
+        <div style="max-width:400px">
+          <div class="ss">
+            <div class="ss-title">Company / entity names</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Add the entities or companies this system manages.</div>
+            <div id="ent-list" style="margin-bottom:8px"></div>
+            <div style="display:flex;gap:6px"><input type="text" id="ent-in" placeholder="e.g. Company A, Branch 1..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);outline:none"><button class="btn btn-s btn-xs" onclick="addEnt()">Add</button></div>
+          </div>
+          <div class="ss">
+            <div class="ss-title">Departments / business units</div>
+            <div id="dept-list" style="margin-bottom:8px"></div>
+            <div style="display:flex;gap:6px"><input type="text" id="dept-in" placeholder="e.g. Operations, Finance, HR..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);outline:none"><button class="btn btn-s btn-xs" onclick="addDept()">Add</button></div>
+          </div>
+          <div class="ss">
+            <div class="ss-title">Subscription categories</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Define your own subscription categories (e.g. Streaming, Software, Membership).</div>
+            <div id="subcat-list" style="margin-bottom:8px"></div>
+            <div style="display:flex;gap:6px"><input type="text" id="subcat-in" placeholder="e.g. Streaming, Software, Internet..." style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:inherit;background:var(--surface);color:var(--text);outline:none"><button class="btn btn-s btn-xs" onclick="addSubCat()">Add</button></div>
+          </div>
+            <div class="chk-row"><input type="checkbox" id="a30" checked><label for="a30" style="cursor:pointer">Alert 30 days before expiry</label></div>
+            <div class="chk-row"><input type="checkbox" id="a7" checked><label for="a7" style="cursor:pointer">Alert 7 days before expiry</label></div>
+            <div class="chk-row"><input type="checkbox" id="a1" checked><label for="a1" style="cursor:pointer">Alert 1 day before expiry</label></div>
+          </div>
+          <div class="ss">
+            <div class="ss-title">Email notifications</div>
+            <div class="fg" style="margin-bottom:8px"><label>Alert email address</label><input type="email" id="s-email" placeholder="admin@yourcompany.com"></div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Wire to SendGrid or Gmail SMTP for live email delivery. Google Sheets sync coming next.</div>
+            <button class="btn btn-p btn-xs" onclick="saveSettings()">Save settings</button>
+            <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+              <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🤖 Telegram Alerts</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Alerts are sent automatically once per day when the app is opened. Expired, ≤7 days, and ≤30 days renewals are included.</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-p btn-xs" onclick="testTelegramAlert()">📨 Send Test Alert</button>
+                <button class="btn btn-s btn-xs" onclick="resetTgDaily()">↺ Reset Daily Limit</button>
+              </div>
+            </div>
+          </div>
+          <div class="ss">
+            <div class="ss-title">Google Sheets sync</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">Once your Web App URL is saved, all changes sync <strong>automatically</strong> to Google Sheets in real time. Data loads fresh every time the page opens, and refreshes every 60 seconds.</div>
+            <div class="fg" style="margin-bottom:10px">
+              <label>Web App URL</label>
+              <input type="url" id="gs-url-input" placeholder="https://script.google.com/macros/s/..." style="font-size:11px">
+            </div>
+            <div id="sync-status-set" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-p btn-xs" onclick="saveGSUrl()">Save URL</button>
+              <button class="btn btn-s btn-xs" onclick="pushAllToSheets()">&#8593; Push all to Sheets</button>
+              <button class="btn btn-s btn-xs" onclick="pullAllFromSheets()">&#8635; Force Sync</button>
+            </div>
+          </div>
+          <div class="ss">
+            <div class="ss-title">Data management</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-s btn-xs" onclick="exportBackup()">&#8595; Backup JSON</button>
+              <button class="btn btn-danger btn-xs" onclick="clearAll()">&#10005; Clear all data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="modal-ttl">Add Renewal</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeModal()">&#10005;</button></div>
+    <div class="mc">
+      <div class="fg2">
+        <div class="fg full"><label>Title *</label><input type="text" id="f-title" placeholder="e.g. LTO Registration – Plate ABC 123"></div>
+        <div class="fg"><label>Category *</label>
+          <select id="f-cat">
+            <option>LTO / Vehicle</option><option>Insurance</option><option>Business Permit</option>
+            <option>Contract</option><option>Subscription</option><option>Equipment</option>
+            <option>License / Cert</option><option>Employee Doc</option><option>Custom</option>
+          </select>
+        </div>
+        <div class="fg"><label>Entity / Company</label><select id="f-ent"><option value="">— Select entity —</option></select></div>
+        <div class="fg"><label>Department</label><select id="f-dept"><option value="">— Select department —</option></select></div>
+        <div class="fg"><label>Unit Code / Plate No.</label><input type="text" id="f-unit" placeholder="e.g. EQ-001, ABC-123"></div>
+        <div class="fg"><label>Start Date</label><input type="date" id="f-start"></div>
+        <div class="fg"><label>Expiry Date *</label><input type="date" id="f-expiry"></div>
+        <div class="fg"><label>Renewal Cycle</label>
+          <select id="f-cycle">
+            <option>Yearly</option><option>Semi-annual</option><option>Quarterly</option>
+            <option>Monthly</option><option>2 Years</option><option>3 Years</option><option>5 Years</option><option>One-time</option>
+          </select>
+        </div>
+        <div class="fg"><label>Cost</label><input type="number" id="f-cost" placeholder="0.00" min="0"></div>
+        <div class="fg"><label>Paid Status</label><select id="f-paid"><option value="Yes">Paid</option><option value="No">Unpaid</option><option value="Partial">Partial</option></select></div>
+        <div class="fg"><label>Reference Number</label><input type="text" id="f-ref" placeholder="e.g. REF-2025-001"></div>
+        <div class="fg"><label>Issuing Agency</label><input type="text" id="f-agency" placeholder="e.g. LTO, BIR, SEC"></div>
+        <div class="fg full"><label>Renewal Website Link <span style="font-weight:400;color:var(--text3)">(optional — click to renew)</span></label><input type="url" id="f-link" placeholder="e.g. https://lto.gov.ph or https://www.bir.gov.ph"></div>
+        <div class="fg full"><label>Notes</label><textarea id="f-notes" placeholder="Additional notes..."></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-s btn-xs" onclick="closeModal()">Cancel</button><button class="btn btn-p btn-xs" onclick="saveR()">Save Renewal</button></div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="detail-bg" onclick="if(event.target===this)closeDetail()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="det-ttl">Details</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeDetail()">&#10005;</button></div>
+    <div class="mc" id="det-body"></div>
+    <div class="mf" id="det-foot"></div>
+  </div>
+</div>
+
+<!-- EXPIRY POPUP -->
+<div class="popup-bg" id="popup-bg">
+  <div class="popup">
+    <div class="ph"><div class="ph-title" id="pop-ttl">Expiry Alert</div><div class="ph-sub" id="pop-sub"></div></div>
+    <div class="pl" id="pop-list"></div>
+    <div class="pf"><button class="btn btn-s btn-xs" onclick="closePopup()">Dismiss</button><button class="btn btn-p btn-xs" onclick="go('renewals',null);closePopup()">View All &#8594;</button></div>
+  </div>
+</div>
+
+<!-- EMPLOYEE RECORD MODAL -->
+<div class="modal-bg" id="emp-modal-bg" onclick="if(event.target===this)closeEmpModal()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="emp-modal-ttl">Add Employee Record</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeEmpModal()">&#10005;</button></div>
+    <div class="mc">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Employee Info</div>
+      <div class="fg2" style="margin-bottom:12px">
+        <div class="fg"><label>Employee ID *</label><input type="text" id="e-empid" placeholder="e.g. EMP-001"></div>
+        <div class="fg"><label>Full Name *</label><input type="text" id="e-name" placeholder="e.g. Juan Dela Cruz"></div>
+        <div class="fg"><label>Position / Job Title</label><input type="text" id="e-position" placeholder="e.g. Driver, Engineer"></div>
+        <div class="fg"><label>Department</label><select id="e-dept"><option value="">— Select department —</option></select></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Requirement Details</div>
+      <div class="fg2">
+        <div class="fg"><label>Requirement Type *</label>
+          <select id="e-type">
+            <option value="">— Select type —</option>
+            <option>Employment Contract</option>
+            <option>Government ID</option>
+            <option>Professional License</option>
+            <option>Medical Certificate</option>
+            <option>NBI / Police Clearance</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Specific Requirement</label><input type="text" id="e-specific" placeholder="e.g. SSS ID, PRC License, NBI Clearance"></div>
+        <div class="fg"><label>Issue Date</label><input type="date" id="e-issued"></div>
+        <div class="fg"><label>Expiry Date *</label><input type="date" id="e-expiry"></div>
+        <div class="fg"><label>Reference / ID Number</label><input type="text" id="e-refno" placeholder="e.g. SSS-0001234567"></div>
+        <div class="fg"><label>Issuing Agency</label><input type="text" id="e-agency" placeholder="e.g. SSS, PRC, NBI"></div>
+        <div class="fg"><label>Status</label><select id="e-status"><option value="Compliant">Compliant</option><option value="Pending">Pending</option><option value="For Renewal">For Renewal</option></select></div>
+        <div class="fg"><label>Entity / Company</label><select id="e-entity"><option value="">— Select entity —</option></select></div>
+        <div class="fg full"><label>Notes</label><textarea id="e-notes" placeholder="Additional notes..."></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-s btn-xs" onclick="closeEmpModal()">Cancel</button><button class="btn btn-p btn-xs" onclick="saveEmp()">Save Record</button></div>
+  </div>
+</div>
+
+<!-- EMPLOYEE DETAIL MODAL -->
+<div class="modal-bg" id="emp-detail-bg" onclick="if(event.target===this)closeEmpDetail()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="ed-ttl">Employee Record</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeEmpDetail()">&#10005;</button></div>
+    <div class="mc" id="ed-body"></div>
+    <div class="mf" id="ed-foot"></div>
+  </div>
+</div>
+
+<!-- HEALTH INSURANCE MODAL -->
+<div class="modal-bg" id="hi-modal-bg" onclick="if(event.target===this)closeHIModal()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="hi-modal-ttl">Add Member Insurance</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeHIModal()">&#10005;</button></div>
+    <div class="mc">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Member Info</div>
+      <div class="fg2" style="margin-bottom:12px">
+        <div class="fg"><label>Full Name *</label><input type="text" id="hi-membername" placeholder="e.g. Juan Dela Cruz"></div>
+        <div class="fg"><label>Relationship *</label>
+          <select id="hi-relationship">
+            <option value="">— Select —</option>
+            <option>Owner</option><option>Spouse</option><option>Child</option>
+            <option>Parent</option><option>Sibling</option><option>Key Executive</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Date of Birth</label><input type="date" id="hi-dob"></div>
+        <div class="fg"><label>Entity / Company</label><select id="hi-entity"><option value="">— Select entity —</option></select></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Policy Details</div>
+      <div class="fg2">
+        <div class="fg"><label>Insurance Type *</label>
+          <select id="hi-type">
+            <option value="">— Select type —</option>
+            <option>HMO</option><option>Life Insurance</option>
+            <option>Personal Accident</option><option>Group Health</option>
+          </select>
+        </div>
+        <div class="fg"><label>Plan / Policy Name *</label><input type="text" id="hi-planname" placeholder="e.g. Maxicare Prime VIP"></div>
+        <div class="fg"><label>Insurance Provider</label><input type="text" id="hi-provider" placeholder="e.g. Maxicare, Philam Life, AXA"></div>
+        <div class="fg"><label>Policy Number</label><input type="text" id="hi-polno" placeholder="e.g. POL-2025-001"></div>
+        <div class="fg"><label>Coverage Amount</label><input type="number" id="hi-coverage" placeholder="0.00" min="0"></div>
+        <div class="fg"><label>Premium / Cost</label><input type="number" id="hi-premium" placeholder="0.00" min="0"></div>
+        <div class="fg"><label>Start Date</label><input type="date" id="hi-start"></div>
+        <div class="fg"><label>Expiry Date *</label><input type="date" id="hi-expiry"></div>
+        <div class="fg"><label>Renewal Cycle</label>
+          <select id="hi-cycle"><option>Yearly</option><option>Semi-annual</option><option>Quarterly</option><option>Monthly</option></select>
+        </div>
+        <div class="fg"><label>Paid Status</label>
+          <select id="hi-paid"><option value="Yes">Paid</option><option value="No">Unpaid</option><option value="Partial">Partial</option></select>
+        </div>
+        <div class="fg full"><label>Notes / Benefits</label><textarea id="hi-notes" placeholder="e.g. covers hospitalization, dental, optical..."></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-s btn-xs" onclick="closeHIModal()">Cancel</button><button class="btn btn-p btn-xs" onclick="saveHIRecord()">Save Record</button></div>
+  </div>
+</div>
+
+<!-- HEALTH DETAIL MODAL -->
+<div class="modal-bg" id="hi-detail-bg" onclick="if(event.target===this)closeHIDet()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="hid-ttl">Insurance Details</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeHIDet()">&#10005;</button></div>
+    <div class="mc" id="hid-body"></div>
+    <div class="mf" id="hid-foot"></div>
+  </div>
+</div>
+
+<!-- CREDIT CARD MODAL -->
+<div class="modal-bg" id="cc-modal-bg" onclick="if(event.target===this)closeCCModal()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="cc-modal-ttl">Add Credit Card</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeCCModal()">&#10005;</button></div>
+    <div class="mc">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Card Info</div>
+      <div class="fg2" style="margin-bottom:12px">
+        <div class="fg"><label>Card Name *</label><input type="text" id="cc-name" placeholder="e.g. BPI Gold Mastercard"></div>
+        <div class="fg"><label>Bank / Issuer *</label><input type="text" id="cc-bank" placeholder="e.g. BPI, BDO, Metrobank"></div>
+        <div class="fg"><label>Cardholder Name</label><input type="text" id="cc-holder" placeholder="e.g. Juan Dela Cruz"></div>
+        <div class="fg"><label>Entity / Company</label><select id="cc-entity"><option value="">— Select entity —</option></select></div>
+        <div class="fg"><label>Last 4 Digits</label><input type="text" id="cc-last4" placeholder="e.g. 1234" maxlength="4"></div>
+        <div class="fg"><label>Credit Limit</label><input type="number" id="cc-limit" placeholder="0.00" min="0"></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Expiry &amp; Fees</div>
+      <div class="fg2">
+        <div class="fg"><label>Card Expiry Date *</label><input type="date" id="cc-expiry"></div>
+        <div class="fg"><label>Annual Fee Amount</label><input type="number" id="cc-annfee" placeholder="0.00" min="0"></div>
+        <div class="fg"><label>Annual Fee Renewal Date</label><input type="date" id="cc-feedate"></div>
+        <div class="fg"><label>Annual Fee Paid</label>
+          <select id="cc-feepaid"><option value="Yes">Paid</option><option value="No">Unpaid</option><option value="Waived">Waived</option></select>
+        </div>
+        <div class="fg"><label>Billing Cut-off Day</label><input type="number" id="cc-cutoff" placeholder="e.g. 15" min="1" max="31"></div>
+        <div class="fg"><label>Payment Due Day</label><input type="number" id="cc-dueday" placeholder="e.g. 5" min="1" max="31"></div>
+        <div class="fg full"><label>Notes / Perks</label><textarea id="cc-notes" placeholder="e.g. 3x points on dining, free lounge access..."></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-s btn-xs" onclick="closeCCModal()">Cancel</button><button class="btn btn-p btn-xs" onclick="saveCCRecord()">Save Card</button></div>
+  </div>
+</div>
+
+<!-- CREDIT CARD DETAIL MODAL -->
+<div class="modal-bg" id="cc-detail-bg" onclick="if(event.target===this)closeCCDet()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="ccd-ttl">Credit Card Details</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeCCDet()">&#10005;</button></div>
+    <div class="mc" id="ccd-body"></div>
+    <div class="mf" id="ccd-foot"></div>
+  </div>
+</div>
+
+<!-- SUBSCRIPTION MODAL -->
+<div class="modal-bg" id="sub-modal-bg" onclick="if(event.target===this)closeSubModal()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="sub-modal-ttl">Add Subscription</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeSubModal()">&#10005;</button></div>
+    <div class="mc">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Subscription Info</div>
+      <div class="fg2">
+        <div class="fg full"><label>Subscription Name *</label><input type="text" id="sub-name" placeholder="e.g. Adobe Creative Cloud, Microsoft 365"></div>
+        <div class="fg"><label>Vendor / Provider</label><input type="text" id="sub-vendor" placeholder="e.g. Netflix, Spotify, Adobe"></div>
+        <div class="fg"><label>Category</label>
+          <input type="text" id="sub-cat" list="sub-cat-list" placeholder="e.g. Streaming, Software...">
+          <datalist id="sub-cat-list"></datalist>
+        </div>
+        <div class="fg"><label>Entity / Company</label><select id="sub-entity"><option value="">— Select entity —</option></select></div>
+        <div class="fg"><label>Department</label><select id="sub-dept"><option value="">— Select department —</option></select></div>
+        <div class="fg"><label>Number of Users / Seats</label><input type="number" id="sub-seats" placeholder="e.g. 5" min="1"></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:12px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)">Billing Details</div>
+      <div class="fg2">
+        <div class="fg"><label>Billing Cycle *</label>
+          <select id="sub-cycle">
+            <option>Monthly</option>
+            <option>Quarterly</option>
+            <option>Semi-annual</option>
+            <option selected>Yearly</option>
+          </select>
+        </div>
+        <div class="fg"><label>Cost per Cycle</label><input type="number" id="sub-cost" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="fg"><label>Start / Last Renewal Date</label><input type="date" id="sub-start"></div>
+        <div class="fg"><label>Next Renewal Date *</label><input type="date" id="sub-expiry"></div>
+        <div class="fg"><label>Paid Status</label><select id="sub-paid"><option value="Yes">Paid</option><option value="No">Unpaid</option><option value="Partial">Partial</option></select></div>
+        <div class="fg"><label>Auto-renews?</label><select id="sub-auto"><option value="Yes">Yes — Auto-renews</option><option value="No">No — Manual renewal</option></select></div>
+        <div class="fg"><label>Account / License Email</label><input type="email" id="sub-email" placeholder="e.g. admin@bigbengroup.ph"></div>
+        <div class="fg"><label>Reference / Order No.</label><input type="text" id="sub-ref" placeholder="e.g. ORD-2025-001"></div>
+        <div class="fg full"><label>Renewal / Portal Link <span style="font-weight:400;color:var(--text3)">(optional)</span></label><input type="url" id="sub-link" placeholder="e.g. https://account.adobe.com"></div>
+        <div class="fg full"><label>Notes</label><textarea id="sub-notes" placeholder="Additional notes..."></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-s btn-xs" onclick="closeSubModal()">Cancel</button><button class="btn btn-p btn-xs" onclick="saveSub()">Save Subscription</button></div>
+  </div>
+</div>
+
+<!-- SUBSCRIPTION DETAIL MODAL -->
+<div class="modal-bg" id="sub-detail-bg" onclick="if(event.target===this)closeSubDet()">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="subd-ttl">Subscription Details</div><button style="background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;line-height:1" onclick="closeSubDet()">&#10005;</button></div>
+    <div class="mc" id="subd-body"></div>
+    <div class="mf" id="subd-foot"></div>
+  </div>
+</div>
+
+
+<script type="module">
+// ── FIREBASE SETUP ────────────────────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDFWjxzXSU0egcRgICty2nto0mTN_dIuSI",
+  authDomain: "renewal-desk---sa-tech.firebaseapp.com",
+  projectId: "renewal-desk---sa-tech",
+  storageBucket: "renewal-desk---sa-tech.firebasestorage.app",
+  messagingSenderId: "60134171804",
+  appId: "1:60134171804:web:4b7a8caabc72d7ca887959"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── COLLECTION REFS ───────────────────────────────────────────
+const COLS = {
+  renewals:      collection(db,'renewals'),
+  agency:        collection(db,'agency'),
+  health:        collection(db,'health'),
+  creditcards:   collection(db,'creditcards'),
+  subscriptions: collection(db,'subscriptions'),
+  audit:         collection(db,'audit'),
+};
+
+// ── IN-MEMORY STATE ───────────────────────────────────────────
+const UID=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+let R=[],EMP=[],HI=[],CC=[],SUB=[],A=[];
+let S=JSON.parse(localStorage.getItem('rd3_s')||'{"entities":[],"depts":[],"subcats":[],"email":"","a30":true,"a7":true,"a1":true}');
+let sel=new Set(),editId=null,view='table',calM=new Date().getMonth(),calY=new Date().getFullYear();
+let subView='cards',subEditId=null,hiEditId=null,ccEditId=null,empEditId=null;
+const CYC={'Yearly':12,'Semi-annual':6,'Quarterly':3,'Monthly':1,'2 Years':24,'3 Years':36,'5 Years':60,'One-time':0};
+const CYC_MONTHS={'Monthly':1,'Quarterly':3,'Semi-annual':6,'Yearly':12};
+const saveS=()=>localStorage.setItem('rd3_s',JSON.stringify(S));
+const saveRd=()=>{};const saveEmpData=()=>{};const saveHI=()=>{};const saveCC=()=>{};const saveSUB=()=>{};const saveA=()=>{};
+
+// ── FIREBASE HELPERS ──────────────────────────────────────────
+async function fbSet(col,data){try{await setDoc(doc(db,col,data.id),data);}catch(e){toast('Sync error: '+e.message,'error');}}
+async function fbDel(col,id){try{await deleteDoc(doc(db,col,id));}catch(e){toast('Delete error: '+e.message,'error');}}
+async function fbBulk(col,items){try{const b=writeBatch(db);items.forEach(i=>b.set(doc(db,col,i.id),i));await b.commit();}catch(e){console.error(e);}}
+function autoSync(){}
+
+// ── AUDIT ─────────────────────────────────────────────────────
+function log(action,detail){const e={id:UID(),action,detail,time:new Date().toISOString()};A.unshift(e);if(A.length>300)A=A.slice(0,300);fbSet('audit',e);}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function toast(msg,type='success',dur=3000){
+  const ic={success:'✓',error:'✕',info:'ℹ',warn:'⚠'}[type]||'●';
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`;
+  t.innerHTML=`<span class="toast-ic">${ic}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>{t.style.animation='toastOut .22s ease forwards';setTimeout(()=>t.remove(),220);},dur);
+}
+window.toast=toast;
+
+// ── SYNC STATUS ───────────────────────────────────────────────
+function showSyncStatus(msg,loading){
+  const el=document.getElementById('sync-status');if(!el)return;
+  el.textContent=(loading?'⟳ ':'')+msg;
+  el.style.color=loading?'var(--orange)':msg.includes('error')?'var(--red)':'var(--green)';
+  if(!loading)setTimeout(()=>{el.textContent='● Live';el.style.color='var(--green)';},3000);
+}
+function pullAllFromSheets(){toast('Now using Firebase live sync — no manual pull needed.','info');}
+function pushAllToSheets(){toast('Now using Firebase — data saves automatically.','info');}
+window.pullAllFromSheets=pullAllFromSheets;window.pushAllToSheets=pushAllToSheets;
+
+// ── REAL-TIME LISTENERS ───────────────────────────────────────
+function startListeners(){
+  showSyncStatus('Connecting...',true);
+  onSnapshot(COLS.renewals,snap=>{R=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.created||0)-new Date(a.created||0));updateAlertBadge();refreshActivePage();});
+  onSnapshot(COLS.agency,snap=>{EMP=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.created||0)-new Date(a.created||0));if(document.getElementById('page-agency').classList.contains('active'))renderAgency();});
+  onSnapshot(COLS.health,snap=>{HI=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.created||0)-new Date(a.created||0));if(document.getElementById('page-health').classList.contains('active'))renderHealth();});
+  onSnapshot(COLS.creditcards,snap=>{CC=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.created||0)-new Date(a.created||0));if(document.getElementById('page-creditcards').classList.contains('active'))renderCreditCards();});
+  onSnapshot(COLS.subscriptions,snap=>{SUB=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.created||0)-new Date(a.created||0));if(document.getElementById('page-subscriptions').classList.contains('active'))renderSubscriptions();});
+  onSnapshot(COLS.audit,snap=>{A=snap.docs.map(d=>d.data()).sort((a,b)=>new Date(b.time||0)-new Date(a.time||0)).slice(0,300);if(document.getElementById('page-audit').classList.contains('active'))renderAudit();});
+  showSyncStatus('Live ✓',false);
+}
+
+function updateAlertBadge(){
+  const alerts=R.filter(r=>status(r.expiry).type!=='active').length;
+  const nb=document.getElementById('nb'),ta=document.getElementById('tb-alert'),nd=document.getElementById('notif-dot');
+  if(alerts>0){nb.textContent=alerts;nb.style.display='inline';ta.textContent=alerts+' alerts';ta.style.display='inline';if(nd)nd.classList.add('show');}
+  else{nb.style.display='none';ta.style.display='none';if(nd)nd.classList.remove('show');}
+}
+
+function refreshActivePage(){
+  const p=document.querySelector('.page.active');if(!p)return;
+  const id=p.id.replace('page-','');
+  if(id==='dashboard')renderDash();
+  else if(id==='renewals')renderView();
+  else if(id==='finance')renderFin();
+}
+
+// ── PRINT & NOTIFICATIONS ─────────────────────────────────────
+function doPrint(){document.getElementById('ph-date').textContent='Printed: '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});document.querySelectorAll('.print-header').forEach(el=>el.style.display='block');window.print();setTimeout(()=>document.querySelectorAll('.print-header').forEach(el=>el.style.display='none'),500);}
+function requestNotifPermission(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();}
+function sendBrowserNotif(title,body){if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body});}
+window.doPrint=doPrint;
+
+// ── HELPERS ───────────────────────────────────────────────────
+function hl(text,q){if(!q||!text)return text||'';const e=q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return String(text).replace(new RegExp('('+e+')','gi'),'<mark>$1</mark>');}
+
+function status(expiry){
+  const t=new Date();t.setHours(0,0,0,0);const d=new Date(expiry);d.setHours(0,0,0,0);const n=Math.round((d-t)/86400000);
+  if(n<0)return{label:'Expired',cls:'b-red',type:'expired',days:n};
+  if(n<=1)return{label:'1 day left',cls:'b-red',type:'warn7',days:n};
+  if(n<=7)return{label:n+' days left',cls:'b-orange',type:'warn7',days:n};
+  if(n<=30)return{label:n+' days left',cls:'b-orange',type:'warn30',days:n};
+  return{label:'Active',cls:'b-green',type:'active',days:n};
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function go(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(el)el.classList.add('active');
+  const T={dashboard:'Dashboard',renewals:'All Renewals',finance:'Cost & Forecast',agency:'Agency — Employee Requirements',health:'Health Insurance',creditcards:'Credit Cards',subscriptions:'Subscriptions',import:'Import Data',audit:'Audit Log',settings:'Settings'};
+  document.getElementById('tb-title').textContent=T[page]||page;
+  if(page==='dashboard')renderDash();if(page==='renewals')renderView();if(page==='finance')renderFin();
+  if(page==='agency')renderAgency();if(page==='health')renderHealth();if(page==='creditcards')renderCreditCards();
+  if(page==='subscriptions')renderSubscriptions();if(page==='audit')renderAudit();if(page==='settings')renderSettings();
+}
+window.go=go;
+
+// ── THEME ─────────────────────────────────────────────────────
+function toggleTheme(){const dark=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',dark?'':'dark');document.getElementById('th-ic').innerHTML=dark?'&#9681;':'&#9680;';document.getElementById('th-lbl').textContent=dark?'Dark mode':'Light mode';localStorage.setItem('rd3_theme',dark?'light':'dark');}
+window.toggleTheme=toggleTheme;
+const savedT=localStorage.getItem('rd3_theme');
+if(savedT==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('th-ic').innerHTML='&#9680;';document.getElementById('th-lbl').textContent='Light mode';}
+
+// ── RENEWALS ──────────────────────────────────────────────────
+function setF(cat){document.getElementById('flt-cat').value=cat;renderView();}window.setF=setF;
+function getFiltered(){
+  const q=(document.getElementById('srch').value||'').toLowerCase(),cat=document.getElementById('flt-cat').value,ent=document.getElementById('flt-ent').value,st=document.getElementById('flt-st').value;
+  return R.filter(r=>{const mq=!q||(r.title+r.cat+(r.entity||'')+(r.dept||'')+(r.ref||'')+(r.unit||'')).toLowerCase().includes(q);return mq&&(!cat||r.cat===cat)&&(!ent||r.entity===ent)&&(!st||status(r.expiry).type===st);});
+}
+function setView(v,el){view=v;document.querySelectorAll('.vt').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');renderView();}window.setView=setView;
+function renderView(){const d=getFiltered();if(view==='table')renderTable(d);else if(view==='kanban')renderKanban(d);else if(view==='calendar')renderCal();else if(view==='timeline')renderTL(d);else if(view==='cards')renderCards(d);updateBulk();}
+
+function renderTable(data){
+  const q=(document.getElementById('srch').value||'').toLowerCase();
+  let h='<div class="tbl-wrap"><table><thead><tr><th style="width:32px"><input type="checkbox" onchange="selAll(this.checked)"></th><th>Title</th><th>Category</th><th>Entity</th><th>Unit Code</th><th>Expiry</th><th>Status</th><th>Paid</th><th>Actions</th></tr></thead><tbody>';
+  if(!data.length)h+='<tr><td colspan="9" class="empty">No records found.</td></tr>';
+  data.forEach(r=>{const s=status(r.expiry),pc=r.paid==='Yes'?'b-green':r.paid==='Partial'?'b-orange':'b-red';
+    h+=`<tr><td><input type="checkbox" ${sel.has(r.id)?'checked':''} onchange="toggleSel('${r.id}',this.checked)"></td><td style="font-weight:500;max-width:145px"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${hl(r.title,q)}</div><div style="font-size:10px;color:var(--text3)">${hl(r.ref,q)||''}</div></td><td><span class="badge b-gray">${r.cat}</span></td><td style="font-size:11px;color:var(--text2)">${hl(r.entity,q)||'—'}</td><td style="font-family:monospace;font-size:10px;color:var(--text2)">${hl(r.unit,q)||'—'}</td><td style="font-family:monospace;font-size:11px">${r.expiry}</td><td><span class="badge ${s.cls}">${s.label}</span></td><td><span class="badge ${pc}">${r.paid}</span></td><td><div style="display:flex;gap:3px"><button class="act-btn a-view" onclick="viewDet('${r.id}')">Detail</button><button class="act-btn a-renew" onclick="doRenew('${r.id}')">&#8635;</button><button class="act-btn a-edit" onclick="openEdit('${r.id}')">&#9998;</button>${r.link?`<button class="act-btn" style="background:var(--blue-bg);color:var(--blue)" onclick="window.open('${r.link}','_blank')">&#8599;</button>`:''}<button class="act-btn a-del" onclick="doDel('${r.id}')">&#10005;</button></div></td></tr>`;});
+  h+='</tbody></table></div>';document.getElementById('view-area').innerHTML=h;
+}
+
+function renderKanban(data){
+  const cols=[{key:'expired',label:'Expired',color:'var(--red)'},{key:'warn7',label:'≤7 days',color:'var(--orange)'},{key:'warn30',label:'≤30 days',color:'#d97706'},{key:'active',label:'Active',color:'var(--green)'}];
+  let h='<div class="kanban">';
+  cols.forEach(c=>{const items=data.filter(r=>status(r.expiry).type===c.key);h+=`<div class="kb-col"><div class="kb-header" style="color:${c.color}">${c.label}<span class="kb-count">${items.length}</span></div>`;if(!items.length)h+=`<div style="font-size:11px;color:var(--text3);text-align:center;padding:10px 0">None</div>`;items.slice(0,7).forEach(r=>{h+=`<div class="kb-card" onclick="viewDet('${r.id}')"><div class="kb-title">${r.title}</div><div class="kb-meta">${r.cat}${r.entity?' · '+r.entity:''}</div><div class="kb-meta" style="font-family:monospace;margin-top:2px">${r.expiry}</div></div>`;});if(items.length>7)h+=`<div style="font-size:10px;color:var(--text3);text-align:center;padding:3px">+${items.length-7} more</div>`;h+='</div>';});
+  h+='</div>';document.getElementById('view-area').innerHTML=h;
+}
+
+function renderCal(){
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'],DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],today=new Date(),fd=new Date(calY,calM,1).getDay(),dim=new Date(calY,calM+1,0).getDate(),em={};
+  R.forEach(r=>{const d=new Date(r.expiry);if(d.getMonth()===calM&&d.getFullYear()===calY){const k=d.getDate();if(!em[k])em[k]=[];em[k].push(r);}});
+  let h=`<div class="cal-grid"><div class="cal-header"><button class="btn btn-s btn-xs" onclick="calPrev()">&#8592;</button><div class="cal-title">${MN[calM]} ${calY}</div><button class="btn btn-s btn-xs" onclick="calNext()">&#8594;</button></div><div class="cal-days-header">${DN.map(d=>`<div class="cal-day-lbl">${d}</div>`).join('')}</div><div class="cal-days">`;
+  for(let i=0;i<fd;i++)h+=`<div class="cal-cell cal-other"></div>`;
+  for(let d=1;d<=dim;d++){const isT=d===today.getDate()&&calM===today.getMonth()&&calY===today.getFullYear(),evs=em[d]||[];h+=`<div class="cal-cell"><div class="cal-num${isT?' today':''}">${d}</div>`;evs.slice(0,2).forEach(r=>{const s=status(r.expiry),ec=s.type==='expired'?'':s.type.startsWith('warn')?'soon':'ok';h+=`<div class="cal-ev ${ec}" onclick="viewDet('${r.id}')" title="${r.title}">${r.title}</div>`;});if(evs.length>2)h+=`<div style="font-size:9px;color:var(--text3)">+${evs.length-2}</div>`;h+='</div>';}
+  h+='</div></div>';document.getElementById('view-area').innerHTML=h;
+}
+function calPrev(){calM--;if(calM<0){calM=11;calY--;}renderCal();}function calNext(){calM++;if(calM>11){calM=0;calY++;}renderCal();}
+window.calPrev=calPrev;window.calNext=calNext;
+
+function renderTL(data){
+  if(!data.length){document.getElementById('view-area').innerHTML='<div class="empty">No records.</div>';return;}
+  const sorted=data.slice().sort((a,b)=>new Date(a.expiry)-new Date(b.expiry)).slice(0,18),today=new Date(),minD=new Date(sorted[0].expiry),maxD=new Date(sorted[sorted.length-1].expiry);
+  minD.setDate(minD.getDate()-15);maxD.setDate(maxD.getDate()+15);
+  const range=maxD-minD||1,pct=d=>Math.max(0,Math.min(100,((new Date(d)-minD)/range)*100)),tp=Math.max(0,Math.min(100,((today-minD)/range)*100));
+  let h=`<div class="tl-wrap"><div class="tl-hdr">Timeline — ${sorted.length} renewals</div>`;
+  sorted.forEach(r=>{const s=status(r.expiry),col=s.type==='expired'?'var(--red)':s.type.startsWith('warn')?'var(--orange)':'var(--accent)',lp=Math.max(0,pct(r.expiry)-8);h+=`<div class="tl-row"><div class="tl-lbl" title="${r.title}">${r.title}</div><div class="tl-track"><div class="tl-bar" style="left:${lp}%;width:${Math.min(16,100-lp)}%;background:${col}">${r.expiry}</div><div class="tl-now" style="left:${tp}%"></div></div><span class="badge ${s.cls}" style="font-size:9px;flex-shrink:0">${s.label}</span></div>`;});
+  h+='</div>';document.getElementById('view-area').innerHTML=h;
+}
+
+function renderCards(data){
+  if(!data.length){document.getElementById('view-area').innerHTML='<div class="empty">No records.</div>';return;}
+  let h='<div class="card-grid">';
+  data.forEach(r=>{const s=status(r.expiry);h+=`<div class="cg-card ${s.type}" onclick="viewDet('${r.id}')"><div class="cg-cat">${r.cat}</div><div class="cg-title">${r.title}</div><div class="cg-expiry">${r.expiry}</div><div class="cg-footer"><span class="badge ${s.cls}">${s.label}</span>${r.entity?`<span class="badge b-accent">${r.entity}</span>`:''}</div></div>`;});
+  h+='</div>';document.getElementById('view-area').innerHTML=h;
+}
+
+function toggleSel(id,v){if(v)sel.add(id);else sel.delete(id);updateBulk();}
+function selAll(v){getFiltered().forEach(r=>v?sel.add(r.id):sel.delete(r.id));updateBulk();renderView();}
+function clearSel(){sel.clear();updateBulk();renderView();}
+function updateBulk(){const n=sel.size;document.getElementById('bulk-bar').style.display=n?'flex':'none';document.getElementById('bulk-ct').textContent=n+' selected';}
+window.toggleSel=toggleSel;window.selAll=selAll;window.clearSel=clearSel;
+
+function openAdd(){editId=null;document.getElementById('modal-ttl').textContent='Add Renewal';clearForm();populateSelects();document.getElementById('modal-bg').style.display='flex';}
+function openEdit(id){editId=id;const r=R.find(x=>x.id===id);if(!r)return;document.getElementById('modal-ttl').textContent='Edit Renewal';document.getElementById('f-title').value=r.title;document.getElementById('f-cat').value=r.cat;document.getElementById('f-unit').value=r.unit||'';document.getElementById('f-start').value=r.start||'';document.getElementById('f-expiry').value=r.expiry;document.getElementById('f-cycle').value=r.cycle||'Yearly';document.getElementById('f-cost').value=r.cost||'';document.getElementById('f-ref').value=r.ref||'';document.getElementById('f-agency').value=r.agency||'';document.getElementById('f-link').value=r.link||'';document.getElementById('f-paid').value=r.paid||'No';document.getElementById('f-notes').value=r.notes||'';populateSelects();setTimeout(()=>{document.getElementById('f-ent').value=r.entity||'';document.getElementById('f-dept').value=r.dept||'';},30);document.getElementById('modal-bg').style.display='flex';}
+function clearForm(){['f-title','f-unit','f-start','f-expiry','f-cost','f-ref','f-agency','f-link','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('f-cat').value='LTO / Vehicle';document.getElementById('f-cycle').value='Yearly';document.getElementById('f-paid').value='No';}
+function closeModal(){document.getElementById('modal-bg').style.display='none';editId=null;}
+window.openAdd=openAdd;window.openEdit=openEdit;window.closeModal=closeModal;
+
+function saveR(){
+  const title=document.getElementById('f-title').value.trim(),expiry=document.getElementById('f-expiry').value;
+  let valid=true;document.querySelectorAll('#modal-bg .fg input,#modal-bg .fg select').forEach(el=>el.classList.remove('invalid'));
+  if(!title){document.getElementById('f-title').classList.add('invalid');valid=false;}
+  if(!expiry){document.getElementById('f-expiry').classList.add('invalid');valid=false;}
+  if(!valid){toast('Title and Expiry Date are required.','error');return;}
+  const data={title,cat:document.getElementById('f-cat').value,entity:document.getElementById('f-ent').value,dept:document.getElementById('f-dept').value,unit:document.getElementById('f-unit').value.trim(),start:document.getElementById('f-start').value,expiry,cycle:document.getElementById('f-cycle').value,cost:document.getElementById('f-cost').value,ref:document.getElementById('f-ref').value.trim(),agency:document.getElementById('f-agency').value.trim(),link:document.getElementById('f-link').value.trim(),paid:document.getElementById('f-paid').value,notes:document.getElementById('f-notes').value.trim()};
+  if(editId){const r=R.find(x=>x.id===editId);if(r){fbSet('renewals',{...r,...data});log('Updated',title);toast('Renewal updated.','success');}}
+  else{data.id=UID();data.created=new Date().toISOString();data.history=[{date:new Date().toISOString(),action:'Created',expiry}];fbSet('renewals',data);log('Created',title);toast('Renewal added.','success');}
+  closeModal();
+}
+window.saveR=saveR;
+
+function doRenew(id){const r=R.find(x=>x.id===id);if(!r)return;const m=CYC[r.cycle]||12;if(m===0){toast('One-time renewal — no auto-cycle.','warn');return;}const nd=new Date(r.expiry);nd.setMonth(nd.getMonth()+m);const ne=nd.toISOString().split('T')[0];const nr={...r,id:UID(),start:r.expiry,expiry:ne,paid:'No',created:new Date().toISOString(),history:[{date:new Date().toISOString(),action:'Renewed from '+r.expiry,expiry:ne}]};fbSet('renewals',nr);log('Renewed',r.title+' → '+ne);toast('Renewed → '+ne,'success');}
+function doDel(id){const r=R.find(x=>x.id===id);if(!r)return;if(!confirm('Delete "'+r.title+'"?'))return;fbDel('renewals',id);log('Deleted',r.title);sel.delete(id);toast('Deleted.','info');}
+function bulkRenew(){if(!sel.size)return;[...sel].forEach(id=>doRenew(id));sel.clear();updateBulk();}
+function bulkDelete(){if(!sel.size)return;if(!confirm('Delete '+sel.size+' records?'))return;const n=sel.size;[...sel].forEach(id=>fbDel('renewals',id));log('Deleted',n+' records (bulk)');sel.clear();updateBulk();toast(n+' deleted.','info');}
+window.doRenew=doRenew;window.doDel=doDel;window.bulkRenew=bulkRenew;window.bulkDelete=bulkDelete;
+
+function viewDet(id){
+  const r=R.find(x=>x.id===id);if(!r)return;const s=status(r.expiry),hist=r.history||[];
+  document.getElementById('det-ttl').textContent=r.title;
+  let h=`<div style="margin-bottom:14px"><div class="ds-title">Renewal info</div><div class="ds-row"><div class="ds-key">Category</div><div class="ds-val">${r.cat}</div></div><div class="ds-row"><div class="ds-key">Entity</div><div class="ds-val">${r.entity||'—'}</div></div><div class="ds-row"><div class="ds-key">Department</div><div class="ds-val">${r.dept||'—'}</div></div><div class="ds-row"><div class="ds-key">Unit Code</div><div class="ds-val">${r.unit||'—'}</div></div><div class="ds-row"><div class="ds-key">Start Date</div><div class="ds-val">${r.start||'—'}</div></div><div class="ds-row"><div class="ds-key">Expiry Date</div><div class="ds-val">${r.expiry}</div></div><div class="ds-row"><div class="ds-key">Cycle</div><div class="ds-val">${r.cycle}</div></div><div class="ds-row"><div class="ds-key">Status</div><div class="ds-val"><span class="badge ${s.cls}">${s.label}</span></div></div></div><div style="margin-bottom:14px"><div class="ds-title">Payment & reference</div><div class="ds-row"><div class="ds-key">Cost</div><div class="ds-val">${r.cost?'₱'+parseFloat(r.cost).toLocaleString(undefined,{minimumFractionDigits:2}):'—'}</div></div><div class="ds-row"><div class="ds-key">Paid</div><div class="ds-val">${r.paid}</div></div><div class="ds-row"><div class="ds-key">Ref. Number</div><div class="ds-val">${r.ref||'—'}</div></div><div class="ds-row"><div class="ds-key">Issuing Agency</div><div class="ds-val">${r.agency||'—'}</div></div>${r.link?`<div class="ds-row"><div class="ds-key">Website</div><div class="ds-val"><a href="${r.link}" target="_blank" style="color:var(--accent);font-size:12px;text-decoration:none;font-weight:500">${r.link.replace(/^https?:\/\//,'').replace(/\/.*$/,'')} ↗</a></div></div>`:''}</div>`;
+  if(r.notes)h+=`<div style="margin-bottom:14px"><div class="ds-title">Notes</div><div style="font-size:12px;color:var(--text2)">${r.notes}</div></div>`;
+  if(hist.length){h+=`<div><div class="ds-title">History</div>`;hist.forEach(e=>{h+=`<div class="th-item"><div class="th-dot"></div><div class="th-date">${new Date(e.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div><div class="th-act">${e.action}</div></div>`;});h+='</div>';}
+  document.getElementById('det-body').innerHTML=h;
+  document.getElementById('det-foot').innerHTML=`<button class="btn btn-s btn-xs" onclick="closeDetail()">Close</button><button class="btn btn-s btn-xs" onclick="closeDetail();openEdit('${id}')">&#9998; Edit</button>${r.link?`<button class="btn btn-s btn-xs" onclick="window.open('${r.link}','_blank')" style="color:var(--blue)">&#8599; Website</button>`:''}<button class="btn btn-p btn-xs" onclick="closeDetail();doRenew('${id}')">&#8635; Renew</button>`;
+  document.getElementById('detail-bg').style.display='flex';
+}
+function closeDetail(){document.getElementById('detail-bg').style.display='none';}
+window.viewDet=viewDet;window.closeDetail=closeDetail;
+
+// ── DASHBOARD ─────────────────────────────────────────────────
+function renderDash(){
+  let expired=0,w7=0,w30=0,active=0;
+  R.forEach(r=>{const s=status(r.expiry);if(s.type==='expired')expired++;else if(s.type==='warn7')w7++;else if(s.type==='warn30')w30++;else active++;});
+  const total=R.length||1;
+  document.getElementById('d-stats').innerHTML=`<div class="sc sc-accent"><div class="sc-label">Total</div><div class="sc-val">${R.length}</div><div class="sc-sub">all renewals</div><div class="sc-bar"><div class="sc-bar-fill" style="width:100%;background:var(--accent)"></div></div></div><div class="sc sc-red"><div class="sc-label">Expired</div><div class="sc-val">${expired}</div><div class="sc-sub">needs action</div><div class="sc-bar"><div class="sc-bar-fill" style="width:${Math.round(expired/total*100)}%;background:var(--red)"></div></div></div><div class="sc sc-orange"><div class="sc-label">Expiring soon</div><div class="sc-val">${w7+w30}</div><div class="sc-sub">within 30 days</div><div class="sc-bar"><div class="sc-bar-fill" style="width:${Math.round((w7+w30)/total*100)}%;background:var(--orange)"></div></div></div><div class="sc sc-green2"><div class="sc-label">Active</div><div class="sc-val">${active}</div><div class="sc-sub">in good standing</div><div class="sc-bar"><div class="sc-bar-fill" style="width:${Math.round(active/total*100)}%;background:var(--green)"></div></div></div>`;
+  const donutData=[{label:'Expired',val:expired,color:'var(--red)'},{label:'≤7 days',val:w7,color:'var(--orange)'},{label:'≤30 days',val:w30,color:'#d97706'},{label:'Active',val:active,color:'var(--green)'}].filter(d=>d.val>0);
+  const tot=donutData.reduce((s,d)=>s+d.val,0)||1,r2=40,cx=54,cy=54,stroke=14,circ=2*Math.PI*r2;
+  let offset=0,paths='';donutData.forEach(d=>{const pct=d.val/tot,dash=pct*circ;paths+=`<circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="${d.color}" stroke-width="${stroke}" stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})" style="transition:.4s"/>`;offset+=dash;});
+  const dd=document.getElementById('d-donut');if(dd)dd.innerHTML=`<div class="donut-wrap"><svg class="donut-svg" width="108" height="108" viewBox="0 0 108 108">${paths}<circle cx="${cx}" cy="${cy}" r="${r2-stroke/2-1}" fill="var(--surface)"/><text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${R.length}</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="9" fill="var(--text3)">total</text></svg><div class="donut-legend">${donutData.map(d=>`<div class="dl-item"><div class="dl-dot" style="background:${d.color}"></div>${d.label}<span class="dl-val">${d.val}</span></div>`).join('')}</div></div>`;
+  const upcoming=R.filter(r=>status(r.expiry).days<=60).sort((a,b)=>new Date(a.expiry)-new Date(b.expiry)).slice(0,7);
+  const du=document.getElementById('d-upcoming');if(du)du.innerHTML=upcoming.length?upcoming.map(r=>{const s=status(r.expiry),dc=s.type==='expired'?'var(--red)':s.type==='warn7'?'var(--orange)':'#d97706';return`<div class="upcoming-item"><div class="upcoming-dot" style="background:${dc}"></div><div class="upcoming-title">${r.title}</div><div class="upcoming-meta">${r.expiry}</div></div>`;}).join(''):'<div style="font-size:12px;color:var(--text3);padding:8px 0">All renewals active ✓</div>';
+  const al=R.filter(r=>status(r.expiry).type!=='active').sort((a,b)=>new Date(a.expiry)-new Date(b.expiry));
+  let ah='<div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text2)">Alerts</div>';
+  if(!al.length)ah+='<div style="font-size:12px;color:var(--text3);padding:10px 0">No alerts — all renewals are active.</div>';
+  al.slice(0,6).forEach(r=>{const s=status(r.expiry),lc=s.type==='expired'?'var(--red)':s.type==='warn7'?'var(--orange)':'#d97706';ah+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-left:3px solid ${lc};border-radius:0 var(--r) var(--r) 0;margin-bottom:5px"><div style="flex:1"><div style="font-size:12px;font-weight:500;color:var(--text)">${r.title}</div><div style="font-size:10px;color:var(--text2)">${r.cat}${r.entity?' · '+r.entity:''} · ${r.expiry}</div></div><span class="badge ${s.cls}">${s.label}</span><button class="act-btn a-renew" onclick="doRenew('${r.id}')">&#8635; Renew</button>${r.link?`<button class="act-btn" style="background:var(--blue-bg);color:var(--blue)" onclick="window.open('${r.link}','_blank')">&#8599;</button>`:''}</div>`;});
+  const da=document.getElementById('d-alerts');if(da)da.innerHTML=ah;
+  const rec=R.slice(0,5);let rh='<div class="tbl-wrap"><table><thead><tr><th>Title</th><th>Category</th><th>Entity</th><th>Expiry</th><th>Status</th></tr></thead><tbody>';
+  if(!rec.length)rh+='<tr><td colspan="5" class="empty">No renewals yet.</td></tr>';
+  rec.forEach(r=>{const s=status(r.expiry);rh+=`<tr><td style="font-weight:500">${r.title}</td><td><span class="badge b-gray">${r.cat}</span></td><td style="font-size:11px;color:var(--text2)">${r.entity||'—'}</td><td style="font-family:monospace;font-size:11px">${r.expiry}</td><td><span class="badge ${s.cls}">${s.label}</span></td></tr>`;});
+  rh+='</tbody></table></div>';const dr=document.getElementById('d-recent');if(dr)dr.innerHTML=rh;
+}
+
+// ── FINANCE ───────────────────────────────────────────────────
+function renderFin(){
+  const catMap={};let total=0;const fMap={};const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  R.forEach(r=>{const c=parseFloat(r.cost)||0;total+=c;if(!catMap[r.cat])catMap[r.cat]=0;catMap[r.cat]+=c;const m=new Date(r.expiry).getMonth();if(!fMap[m])fMap[m]=0;fMap[m]+=c;});
+  const subMonthly=SUB.reduce((s,x)=>{const c=parseFloat(x.cost)||0,m=CYC_MONTHS[x.cycle]||12;return s+(c/m);},0);
+  const unpaid=R.filter(r=>r.paid==='No').length+SUB.filter(s=>s.paid==='No').length;
+  const fmt=v=>'₱'+Math.round(v).toLocaleString();
+  document.getElementById('fin-stats').innerHTML=`<div class="fin-card"><div class="fin-label">Renewals — Total cost</div><div class="fin-val">${fmt(total)}</div></div><div class="fin-card"><div class="fin-label">Subscriptions — Monthly burn</div><div class="fin-val">${fmt(subMonthly)}</div><div class="fin-sub">${SUB.length} subscriptions</div></div><div class="fin-card"><div class="fin-label">Unpaid items</div><div class="fin-val">${unpaid}</div></div>`;
+  const maxC=Math.max(1,...Object.values(catMap));let ch='<div class="bc-title">Renewal spend by category</div>';if(!Object.keys(catMap).length)ch+='<div style="font-size:11px;color:var(--text3)">No cost data.</div>';Object.entries(catMap).sort((a,b)=>b[1]-a[1]).forEach(([cat,val])=>{ch+=`<div class="bc-row"><div class="bc-lbl">${cat}</div><div class="bc-track"><div class="bc-fill" style="width:${Math.round(val/maxC*100)}%"></div></div><div class="bc-val">${fmt(val)}</div></div>`;});document.getElementById('fc-cat').innerHTML=ch;
+  const maxM=Math.max(1,...Object.values(fMap),1),curM=new Date().getMonth();let fh='<div class="bc-title">Forecast by expiry month</div>';for(let m=0;m<12;m++){const v=fMap[m]||0;fh+=`<div class="bc-row"><div class="bc-lbl">${MN[m]}</div><div class="bc-track"><div class="bc-fill" style="width:${Math.round(v/maxM*100)}%;opacity:${m===curM?1:.55}"></div></div><div class="bc-val">${fmt(v)}</div></div>`;}document.getElementById('fc-month').innerHTML=fh;
+  const subCatMap={};SUB.forEach(s=>{const c=parseFloat(s.cost)||0;if(!subCatMap[s.cat])subCatMap[s.cat]=0;subCatMap[s.cat]+=c;});const maxS=Math.max(1,...Object.values(subCatMap));let sh='<div class="bc-title">Subscription spend by category</div>';if(!Object.keys(subCatMap).length)sh+='<div style="font-size:11px;color:var(--text3)">No subscription cost data.</div>';Object.entries(subCatMap).sort((a,b)=>b[1]-a[1]).forEach(([cat,val])=>{sh+=`<div class="bc-row"><div class="bc-lbl">${cat}</div><div class="bc-track"><div class="bc-fill" style="width:${Math.round(val/maxS*100)}%;background:var(--purple)"></div></div><div class="bc-val">${fmt(val)}</div></div>`;});const fs=document.getElementById('fc-sub');if(fs)fs.innerHTML=sh;
+}
+
+// ── AUDIT ─────────────────────────────────────────────────────
+function renderAudit(){
+  const IC={Created:'✚',Updated:'✎',Renewed:'↻',Deleted:'✕',Imported:'↑',Settings:'⚙',Exported:'↓'};
+  let h='';if(!A.length)h='<div class="empty">No audit entries yet.</div>';
+  A.slice(0,80).forEach(e=>{const t=new Date(e.time),ts=t.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' '+t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});h+=`<div class="audit-item"><div class="audit-ic">${IC[e.action]||'·'}</div><div class="audit-body"><div class="audit-action">${e.action}: ${e.detail}</div><div class="audit-time">${ts}</div></div></div>`;});
+  document.getElementById('audit-list').innerHTML=h;
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────
+function renderSettings(){document.getElementById('s-email').value=S.email||'';document.getElementById('a30').checked=S.a30!==false;document.getElementById('a7').checked=S.a7!==false;document.getElementById('a1').checked=S.a1!==false;renderEntList();renderDeptList();renderSubCatList();populateSelects();}
+function renderEntList(){const ents=S.entities||[];document.getElementById('ent-list').innerHTML=ents.length?ents.map((e,i)=>`<span class="badge b-accent" style="margin:2px">${e} <span style="cursor:pointer;margin-left:3px;opacity:.7" onclick="removeEnt(${i})">✕</span></span>`).join(''):'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">No entities yet.</div>';const s=document.getElementById('flt-ent');if(s){s.innerHTML='<option value="">All Entities</option>';ents.forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;s.appendChild(o);});}}
+function renderDeptList(){const depts=S.depts||[];document.getElementById('dept-list').innerHTML=depts.length?depts.map((d,i)=>`<span class="badge b-gray" style="margin:2px">${d} <span style="cursor:pointer;margin-left:3px;opacity:.7" onclick="removeDept(${i})">✕</span></span>`).join(''):'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">No departments yet.</div>';}
+function renderSubCatList(){const cats=S.subcats||[];const el=document.getElementById('subcat-list');if(el)el.innerHTML=cats.length?cats.map((c,i)=>`<span class="badge b-accent" style="margin:2px">${c} <span style="cursor:pointer;margin-left:3px;opacity:.7" onclick="removeSubCat(${i})">✕</span></span>`).join(''):'<div style="font-size:11px;color:var(--text3);margin-bottom:4px">No categories yet.</div>';const allCats=[...new Set([...cats,...SUB.map(s=>s.cat).filter(Boolean)])].sort();const dl=document.getElementById('sub-cat-list');if(dl)dl.innerHTML=allCats.map(c=>`<option value="${c}">`).join('');const sf=document.getElementById('sub-flt-cat');if(sf){const cur=sf.value;sf.innerHTML='<option value="">All Categories</option>';allCats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sf.appendChild(o);});sf.value=cur;}}
+function populateSelects(){const es=document.getElementById('f-ent'),ds=document.getElementById('f-dept');if(es){es.innerHTML='<option value="">— Select entity —</option>';(S.entities||[]).forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;es.appendChild(o);});}if(ds){ds.innerHTML='<option value="">— Select department —</option>';(S.depts||[]).forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;ds.appendChild(o);});}}
+function addEnt(){const v=document.getElementById('ent-in').value.trim();if(!v)return;if(!S.entities)S.entities=[];S.entities.push(v);saveS();document.getElementById('ent-in').value='';renderEntList();populateSelects();toast('"'+v+'" added.','success');}
+function removeEnt(i){S.entities.splice(i,1);saveS();renderEntList();populateSelects();}
+function addDept(){const v=document.getElementById('dept-in').value.trim();if(!v)return;if(!S.depts)S.depts=[];S.depts.push(v);saveS();document.getElementById('dept-in').value='';renderDeptList();toast('"'+v+'" added.','success');}
+function removeDept(i){S.depts.splice(i,1);saveS();renderDeptList();}
+function addSubCat(){const v=document.getElementById('subcat-in').value.trim();if(!v)return;if(!S.subcats)S.subcats=[];if(S.subcats.includes(v)){toast('Already exists.','warn');return;}S.subcats.push(v);saveS();document.getElementById('subcat-in').value='';renderSubCatList();toast('"'+v+'" added.','success');}
+function removeSubCat(i){S.subcats.splice(i,1);saveS();renderSubCatList();}
+function saveSettings(){S.email=document.getElementById('s-email').value;S.a30=document.getElementById('a30').checked;S.a7=document.getElementById('a7').checked;S.a1=document.getElementById('a1').checked;saveS();log('Settings','Alert settings updated');toast('Settings saved.','success');}
+function saveGSUrl(){toast('Now using Firebase — Google Sheets sync is not needed.','info');}
+window.addEnt=addEnt;window.removeEnt=removeEnt;window.addDept=addDept;window.removeDept=removeDept;window.addSubCat=addSubCat;window.removeSubCat=removeSubCat;window.saveSettings=saveSettings;window.saveGSUrl=saveGSUrl;
+
+// ── AGENCY ────────────────────────────────────────────────────
+function setAF(type){document.getElementById('ag-flt-type').value=type;renderAgency();}window.setAF=setAF;
+function getEmpFiltered(){const q=(document.getElementById('ag-srch').value||'').toLowerCase(),type=document.getElementById('ag-flt-type').value,dept=document.getElementById('ag-flt-dept').value,st=document.getElementById('ag-flt-st').value;return EMP.filter(e=>{const mq=!q||(e.name+e.empid+(e.position||'')+(e.dept||'')+(e.specific||'')).toLowerCase().includes(q);return mq&&(!type||e.type===type)&&(!dept||e.dept===dept)&&(!st||status(e.expiry).type===st);});}
+function renderAgency(){
+  const data=getEmpFiltered(),q=(document.getElementById('ag-srch').value||'').toLowerCase();
+  const depts=[...new Set(EMP.map(e=>e.dept).filter(Boolean))],df=document.getElementById('ag-flt-dept'),cur=df.value;df.innerHTML='<option value="">All Departments</option>';depts.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;df.appendChild(o);});df.value=cur;
+  let exp=0,w7=0,w30=0,act=0;EMP.forEach(e=>{const s=status(e.expiry);if(s.type==='expired')exp++;else if(s.type==='warn7')w7++;else if(s.type==='warn30')w30++;else act++;});
+  document.getElementById('ag-stats').innerHTML=`<div class="sc sc-accent"><div class="sc-label">Total</div><div class="sc-val">${EMP.length}</div></div><div class="sc sc-red"><div class="sc-label">Expired</div><div class="sc-val">${exp}</div></div><div class="sc sc-orange"><div class="sc-label">Expiring Soon</div><div class="sc-val">${w7+w30}</div></div><div class="sc sc-green2"><div class="sc-label">Compliant</div><div class="sc-val">${act}</div></div>`;
+  let h='<div class="tbl-wrap"><table><thead><tr><th>Emp ID</th><th>Name</th><th>Position</th><th>Dept</th><th>Requirement</th><th>Specific</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+  if(!data.length)h+='<tr><td colspan="9" class="empty">No records.</td></tr>';
+  data.forEach(e=>{const s=status(e.expiry);h+=`<tr><td style="font-family:monospace;font-size:10px;color:var(--text2)">${hl(e.empid,q)}</td><td style="font-weight:500">${hl(e.name,q)}</td><td style="font-size:11px;color:var(--text2)">${hl(e.position,q)||'—'}</td><td style="font-size:11px;color:var(--text2)">${e.dept||'—'}</td><td><span class="badge b-gray" style="font-size:9px">${e.type}</span></td><td style="font-size:11px;color:var(--text2)">${hl(e.specific,q)||'—'}</td><td style="font-family:monospace;font-size:11px">${e.expiry}</td><td><span class="badge ${s.cls}">${s.label}</span></td><td><div style="display:flex;gap:3px"><button class="act-btn a-view" onclick="viewEmpDet('${e.id}')">Detail</button><button class="act-btn a-edit" onclick="openEditEmp('${e.id}')">&#9998;</button><button class="act-btn a-del" onclick="delEmp('${e.id}')">&#10005;</button></div></td></tr>`;});
+  h+='</tbody></table></div>';document.getElementById('ag-view').innerHTML=h;
+}
+function openAddEmp(){empEditId=null;document.getElementById('emp-modal-ttl').textContent='Add Employee Record';clearEmpForm();populateEmpSelects();document.getElementById('emp-modal-bg').style.display='flex';}
+function openEditEmp(id){empEditId=id;const e=EMP.find(x=>x.id===id);if(!e)return;document.getElementById('emp-modal-ttl').textContent='Edit Employee Record';document.getElementById('e-empid').value=e.empid||'';document.getElementById('e-name').value=e.name||'';document.getElementById('e-position').value=e.position||'';document.getElementById('e-type').value=e.type||'';document.getElementById('e-specific').value=e.specific||'';document.getElementById('e-issued').value=e.issued||'';document.getElementById('e-expiry').value=e.expiry||'';document.getElementById('e-refno').value=e.refno||'';document.getElementById('e-agency').value=e.agency||'';document.getElementById('e-status').value=e.docstatus||'Compliant';document.getElementById('e-notes').value=e.notes||'';populateEmpSelects();setTimeout(()=>{document.getElementById('e-dept').value=e.dept||'';document.getElementById('e-entity').value=e.entity||'';},30);document.getElementById('emp-modal-bg').style.display='flex';}
+function clearEmpForm(){['e-empid','e-name','e-position','e-specific','e-issued','e-expiry','e-refno','e-agency','e-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('e-type').value='';document.getElementById('e-status').value='Compliant';}
+function populateEmpSelects(){const ds=document.getElementById('e-dept'),es=document.getElementById('e-entity');if(ds){ds.innerHTML='<option value="">— Select department —</option>';(S.depts||[]).forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;ds.appendChild(o);});}if(es){es.innerHTML='<option value="">— Select entity —</option>';(S.entities||[]).forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;es.appendChild(o);});}}
+function closeEmpModal(){document.getElementById('emp-modal-bg').style.display='none';empEditId=null;}
+function saveEmp(){
+  const empid=document.getElementById('e-empid').value.trim(),name=document.getElementById('e-name').value.trim(),expiry=document.getElementById('e-expiry').value,type=document.getElementById('e-type').value;
+  let valid=true;if(!empid||!name||!expiry||!type){['e-empid','e-name','e-expiry'].forEach(id=>{if(!document.getElementById(id).value.trim())document.getElementById(id).classList.add('invalid');});toast('Required fields missing.','error');return;}
+  const data={empid,name,position:document.getElementById('e-position').value.trim(),dept:document.getElementById('e-dept').value,entity:document.getElementById('e-entity').value,type,specific:document.getElementById('e-specific').value.trim(),issued:document.getElementById('e-issued').value,expiry,refno:document.getElementById('e-refno').value.trim(),agency:document.getElementById('e-agency').value.trim(),docstatus:document.getElementById('e-status').value,notes:document.getElementById('e-notes').value.trim()};
+  if(empEditId){const e=EMP.find(x=>x.id===empEditId);if(e){fbSet('agency',{...e,...data});log('Updated','[Agency] '+name);toast('Updated.','success');}}else{data.id=UID();data.created=new Date().toISOString();fbSet('agency',data);log('Created','[Agency] '+name);toast('Added.','success');}closeEmpModal();
+}
+function delEmp(id){const e=EMP.find(x=>x.id===id);if(!e)return;if(!confirm('Delete record for "'+e.name+'"?'))return;fbDel('agency',id);log('Deleted','[Agency] '+e.name);toast('Deleted.','info');}
+function viewEmpDet(id){const e=EMP.find(x=>x.id===id);if(!e)return;const s=status(e.expiry);document.getElementById('ed-ttl').textContent=e.name+' — '+e.type;document.getElementById('ed-body').innerHTML=`<div style="margin-bottom:14px"><div class="ds-title">Employee</div><div class="ds-row"><div class="ds-key">ID</div><div class="ds-val">${e.empid}</div></div><div class="ds-row"><div class="ds-key">Name</div><div class="ds-val">${e.name}</div></div><div class="ds-row"><div class="ds-key">Position</div><div class="ds-val">${e.position||'—'}</div></div><div class="ds-row"><div class="ds-key">Department</div><div class="ds-val">${e.dept||'—'}</div></div></div><div style="margin-bottom:14px"><div class="ds-title">Requirement</div><div class="ds-row"><div class="ds-key">Type</div><div class="ds-val">${e.type}</div></div><div class="ds-row"><div class="ds-key">Specific</div><div class="ds-val">${e.specific||'—'}</div></div><div class="ds-row"><div class="ds-key">Expiry</div><div class="ds-val">${e.expiry} <span class="badge ${s.cls}">${s.label}</span></div></div><div class="ds-row"><div class="ds-key">Status</div><div class="ds-val">${e.docstatus}</div></div></div>${e.notes?`<div><div class="ds-title">Notes</div><div style="font-size:12px;color:var(--text2)">${e.notes}</div></div>`:''}`;document.getElementById('ed-foot').innerHTML=`<button class="btn btn-s btn-xs" onclick="closeEmpDetail()">Close</button><button class="btn btn-p btn-xs" onclick="closeEmpDetail();openEditEmp('${id}')">&#9998; Edit</button>`;document.getElementById('emp-detail-bg').style.display='flex';}
+function closeEmpDetail(){document.getElementById('emp-detail-bg').style.display='none';}
+window.openAddEmp=openAddEmp;window.openEditEmp=openEditEmp;window.closeEmpModal=closeEmpModal;window.saveEmp=saveEmp;window.delEmp=delEmp;window.viewEmpDet=viewEmpDet;window.closeEmpDetail=closeEmpDetail;
+
+// ── HEALTH INSURANCE ──────────────────────────────────────────
+function setHF(type){document.getElementById('hi-flt-type').value=type;renderHealth();}window.setHF=setHF;
+function renderHealth(){
+  const q=(document.getElementById('hi-srch').value||'').toLowerCase(),type=document.getElementById('hi-flt-type').value,rel=document.getElementById('hi-flt-rel').value,st=document.getElementById('hi-flt-st').value;
+  const data=HI.filter(h=>{return(!q||(h.membername+(h.provider||'')+(h.polno||'')).toLowerCase().includes(q))&&(!type||h.type===type)&&(!rel||h.relationship===rel)&&(!st||status(h.expiry).type===st);});
+  let exp=0,w7=0,w30=0,act=0;HI.forEach(h=>{const s=status(h.expiry);if(s.type==='expired')exp++;else if(s.type==='warn7')w7++;else if(s.type==='warn30')w30++;else act++;});
+  document.getElementById('hi-stats').innerHTML=`<div class="sc sc-accent"><div class="sc-label">Total</div><div class="sc-val">${HI.length}</div></div><div class="sc sc-red"><div class="sc-label">Expired</div><div class="sc-val">${exp}</div></div><div class="sc sc-orange"><div class="sc-label">Expiring Soon</div><div class="sc-val">${w7+w30}</div></div><div class="sc sc-green2"><div class="sc-label">Active</div><div class="sc-val">${act}</div></div>`;
+  let h='<div class="tbl-wrap"><table><thead><tr><th>Member</th><th>Relationship</th><th>DOB</th><th>Type</th><th>Plan</th><th>Provider</th><th>Policy No.</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+  if(!data.length)h+='<tr><td colspan="10" class="empty">No records.</td></tr>';
+  data.forEach(r=>{const s=status(r.expiry),rc=r.relationship==='Owner'?'b-accent':r.relationship==='Key Executive'?'b-purple':'b-gray';h+=`<tr><td style="font-weight:500">${r.membername}</td><td><span class="badge ${rc}">${r.relationship}</span></td><td style="font-family:monospace;font-size:11px;color:var(--text2)">${r.dob||'—'}</td><td><span class="badge b-blue" style="font-size:9px">${r.type}</span></td><td style="font-size:11px">${r.planname||'—'}</td><td style="font-size:11px;color:var(--text2)">${r.provider||'—'}</td><td style="font-family:monospace;font-size:10px;color:var(--text3)">${r.polno||'—'}</td><td style="font-family:monospace;font-size:11px">${r.expiry}</td><td><span class="badge ${s.cls}">${s.label}</span></td><td><div style="display:flex;gap:3px"><button class="act-btn a-view" onclick="viewHIDet('${r.id}')">Detail</button><button class="act-btn a-edit" onclick="openEditHI('${r.id}')">&#9998;</button><button class="act-btn a-del" onclick="delHI('${r.id}')">&#10005;</button></div></td></tr>`;});
+  h+='</tbody></table></div>';document.getElementById('hi-view').innerHTML=h;
+}
+function openAddHI(){hiEditId=null;document.getElementById('hi-modal-ttl').textContent='Add Member Insurance';clearHIForm();populateHIEnt();document.getElementById('hi-modal-bg').style.display='flex';}
+function openEditHI(id){hiEditId=id;const r=HI.find(x=>x.id===id);if(!r)return;document.getElementById('hi-modal-ttl').textContent='Edit Member Insurance';['hi-membername','hi-dob','hi-planname','hi-provider','hi-polno','hi-coverage','hi-premium','hi-start','hi-expiry','hi-notes'].forEach(f=>{const el=document.getElementById(f);if(el)el.value=r[f.replace('hi-','')]||'';});document.getElementById('hi-relationship').value=r.relationship||'';document.getElementById('hi-type').value=r.type||'';document.getElementById('hi-cycle').value=r.cycle||'Yearly';document.getElementById('hi-paid').value=r.paid||'No';populateHIEnt();setTimeout(()=>{document.getElementById('hi-entity').value=r.entity||'';},30);document.getElementById('hi-modal-bg').style.display='flex';}
+function clearHIForm(){['hi-membername','hi-dob','hi-planname','hi-provider','hi-polno','hi-coverage','hi-premium','hi-start','hi-expiry','hi-notes'].forEach(f=>{const el=document.getElementById(f);if(el)el.value='';});document.getElementById('hi-relationship').value='';document.getElementById('hi-type').value='';document.getElementById('hi-cycle').value='Yearly';document.getElementById('hi-paid').value='No';}
+function populateHIEnt(){const es=document.getElementById('hi-entity');if(es){es.innerHTML='<option value="">— Select entity —</option>';(S.entities||[]).forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;es.appendChild(o);});}}
+function closeHIModal(){document.getElementById('hi-modal-bg').style.display='none';hiEditId=null;}
+function saveHIRecord(){
+  const membername=document.getElementById('hi-membername').value.trim(),expiry=document.getElementById('hi-expiry').value,type=document.getElementById('hi-type').value,relationship=document.getElementById('hi-relationship').value;
+  if(!membername||!expiry||!type||!relationship){toast('Required fields missing.','error');return;}
+  const data={membername,relationship,dob:document.getElementById('hi-dob').value,type,planname:document.getElementById('hi-planname').value.trim(),provider:document.getElementById('hi-provider').value.trim(),polno:document.getElementById('hi-polno').value.trim(),entity:document.getElementById('hi-entity').value,coverage:document.getElementById('hi-coverage').value,premium:document.getElementById('hi-premium').value,start:document.getElementById('hi-start').value,expiry,cycle:document.getElementById('hi-cycle').value,paid:document.getElementById('hi-paid').value,notes:document.getElementById('hi-notes').value.trim()};
+  if(hiEditId){const r=HI.find(x=>x.id===hiEditId);if(r){fbSet('health',{...r,...data});log('Updated','[Health] '+membername);toast('Updated.','success');}}else{data.id=UID();data.created=new Date().toISOString();fbSet('health',data);log('Created','[Health] '+membername);toast('Added.','success');}closeHIModal();
+}
+function delHI(id){const r=HI.find(x=>x.id===id);if(!r)return;if(!confirm('Delete "'+r.membername+'"?'))return;fbDel('health',id);log('Deleted','[Health] '+r.membername);toast('Deleted.','info');}
+function viewHIDet(id){const r=HI.find(x=>x.id===id);if(!r)return;const s=status(r.expiry);document.getElementById('hid-ttl').textContent=r.membername+' — '+r.type;document.getElementById('hid-body').innerHTML=`<div style="margin-bottom:14px"><div class="ds-title">Member</div><div class="ds-row"><div class="ds-key">Name</div><div class="ds-val">${r.membername}</div></div><div class="ds-row"><div class="ds-key">Relationship</div><div class="ds-val">${r.relationship}</div></div><div class="ds-row"><div class="ds-key">DOB</div><div class="ds-val">${r.dob||'—'}</div></div></div><div style="margin-bottom:14px"><div class="ds-title">Policy</div><div class="ds-row"><div class="ds-key">Type</div><div class="ds-val">${r.type}</div></div><div class="ds-row"><div class="ds-key">Plan</div><div class="ds-val">${r.planname||'—'}</div></div><div class="ds-row"><div class="ds-key">Provider</div><div class="ds-val">${r.provider||'—'}</div></div><div class="ds-row"><div class="ds-key">Policy No.</div><div class="ds-val">${r.polno||'—'}</div></div><div class="ds-row"><div class="ds-key">Coverage</div><div class="ds-val">${r.coverage?'₱'+parseFloat(r.coverage).toLocaleString():'—'}</div></div><div class="ds-row"><div class="ds-key">Premium</div><div class="ds-val">${r.premium?'₱'+parseFloat(r.premium).toLocaleString():'—'}</div></div><div class="ds-row"><div class="ds-key">Expiry</div><div class="ds-val">${r.expiry} <span class="badge ${s.cls}">${s.label}</span></div></div></div>${r.notes?`<div><div class="ds-title">Notes</div><div style="font-size:12px;color:var(--text2)">${r.notes}</div></div>`:''}`;document.getElementById('hid-foot').innerHTML=`<button class="btn btn-s btn-xs" onclick="closeHIDet()">Close</button><button class="btn btn-p btn-xs" onclick="closeHIDet();openEditHI('${id}')">&#9998; Edit</button>`;document.getElementById('hi-detail-bg').style.display='flex';}
+function closeHIDet(){document.getElementById('hi-detail-bg').style.display='none';}
+window.openAddHI=openAddHI;window.openEditHI=openEditHI;window.closeHIModal=closeHIModal;window.saveHIRecord=saveHIRecord;window.delHI=delHI;window.viewHIDet=viewHIDet;window.closeHIDet=closeHIDet;
+
+// ── CREDIT CARDS ──────────────────────────────────────────────
+function renderCreditCards(){
+  const q=(document.getElementById('cc-srch').value||'').toLowerCase(),bank=document.getElementById('cc-flt-bank').value,st=document.getElementById('cc-flt-st').value;
+  const banks=[...new Set(CC.map(c=>c.bank).filter(Boolean))],bf=document.getElementById('cc-flt-bank'),curB=bf.value;bf.innerHTML='<option value="">All Banks</option>';banks.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;bf.appendChild(o);});bf.value=curB;
+  const wType=c=>{const se=status(c.expiry),sf=c.feedate?status(c.feedate):{type:'active'};return['expired','warn7','warn30','active'].find(t=>se.type===t||sf.type===t)||'active';};
+  const data=CC.filter(c=>{return(!q||(c.name+c.bank+(c.holder||'')).toLowerCase().includes(q))&&(!bank||c.bank===bank)&&(!st||wType(c)===st);});
+  let expC=0,w7C=0,w30C=0,actC=0;CC.forEach(c=>{const w=wType(c);if(w==='expired')expC++;else if(w==='warn7')w7C++;else if(w==='warn30')w30C++;else actC++;});
+  const totalLimit=CC.reduce((s,c)=>s+(parseFloat(c.limit)||0),0);
+  document.getElementById('cc-stats').innerHTML=`<div class="sc sc-accent"><div class="sc-label">Total Cards</div><div class="sc-val">${CC.length}</div></div><div class="sc sc-red"><div class="sc-label">Needs Attention</div><div class="sc-val">${expC+w7C}</div></div><div class="sc sc-orange"><div class="sc-label">Fee Due Soon</div><div class="sc-val">${CC.filter(c=>c.feedate&&status(c.feedate).type!=='active').length}</div></div><div class="sc sc-green2"><div class="sc-label">Total Limit</div><div class="sc-val" style="font-size:16px">&#8369;${Math.round(totalLimit).toLocaleString()}</div></div>`;
+  let h='<div class="tbl-wrap"><table><thead><tr><th>Card Name</th><th>Bank</th><th>Cardholder</th><th>Last 4</th><th>Limit</th><th>Card Expiry</th><th>Annual Fee</th><th>Fee Renewal</th><th>Cut-off</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+  if(!data.length)h+='<tr><td colspan="11" class="empty">No cards found.</td></tr>';
+  data.forEach(c=>{const se=status(c.expiry),sf=c.feedate?status(c.feedate):null,fpc=c.feepaid==='Yes'?'b-green':c.feepaid==='Waived'?'b-blue':'b-red';h+=`<tr><td style="font-weight:500">${c.name}</td><td><span class="badge b-accent">${c.bank}</span></td><td style="font-size:11px;color:var(--text2)">${c.holder||'—'}</td><td style="font-family:monospace;font-size:11px;color:var(--text3)">**** ${c.last4||'????'}</td><td style="font-size:11px">${c.limit?'&#8369;'+parseFloat(c.limit).toLocaleString():'—'}</td><td style="font-family:monospace;font-size:11px">${c.expiry} <span class="badge ${se.cls}" style="font-size:9px">${se.label}</span></td><td style="font-size:11px">${c.annfee?'&#8369;'+parseFloat(c.annfee).toLocaleString():'—'} <span class="badge ${fpc}" style="font-size:9px">${c.feepaid||'—'}</span></td><td style="font-family:monospace;font-size:11px">${c.feedate||'—'}${sf?` <span class="badge ${sf.cls}" style="font-size:9px">${sf.label}</span>`:''}</td><td style="font-size:11px;text-align:center">${c.cutoff?'Day '+c.cutoff:'—'}</td><td><span class="badge ${se.cls}">${se.label}</span></td><td><div style="display:flex;gap:3px"><button class="act-btn a-view" onclick="viewCCDet('${c.id}')">Detail</button><button class="act-btn a-edit" onclick="openEditCC('${c.id}')">&#9998;</button><button class="act-btn a-del" onclick="delCC('${c.id}')">&#10005;</button></div></td></tr>`;});
+  h+='</tbody></table></div>';document.getElementById('cc-view').innerHTML=h;
+}
+function openAddCC(){ccEditId=null;document.getElementById('cc-modal-ttl').textContent='Add Credit Card';clearCCForm();populateCCEnt();document.getElementById('cc-modal-bg').style.display='flex';}
+function openEditCC(id){ccEditId=id;const c=CC.find(x=>x.id===id);if(!c)return;document.getElementById('cc-modal-ttl').textContent='Edit Credit Card';['cc-name','cc-bank','cc-holder','cc-last4','cc-limit','cc-expiry','cc-annfee','cc-feedate','cc-cutoff','cc-dueday','cc-notes'].forEach(f=>{const el=document.getElementById(f);if(el)el.value=c[f.replace('cc-','')]||'';});document.getElementById('cc-feepaid').value=c.feepaid||'No';populateCCEnt();setTimeout(()=>{document.getElementById('cc-entity').value=c.entity||'';},30);document.getElementById('cc-modal-bg').style.display='flex';}
+function clearCCForm(){['cc-name','cc-bank','cc-holder','cc-last4','cc-limit','cc-expiry','cc-annfee','cc-feedate','cc-cutoff','cc-dueday','cc-notes'].forEach(f=>{const el=document.getElementById(f);if(el)el.value='';});document.getElementById('cc-feepaid').value='No';}
+function populateCCEnt(){const es=document.getElementById('cc-entity');if(es){es.innerHTML='<option value="">— Select entity —</option>';(S.entities||[]).forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;es.appendChild(o);});}}
+function closeCCModal(){document.getElementById('cc-modal-bg').style.display='none';ccEditId=null;}
+function saveCCRecord(){
+  const name=document.getElementById('cc-name').value.trim(),bank=document.getElementById('cc-bank').value.trim(),expiry=document.getElementById('cc-expiry').value;
+  if(!name||!bank||!expiry){toast('Card Name, Bank and Expiry are required.','error');return;}
+  const data={name,bank,holder:document.getElementById('cc-holder').value.trim(),entity:document.getElementById('cc-entity').value,last4:document.getElementById('cc-last4').value.trim(),limit:document.getElementById('cc-limit').value,expiry,annfee:document.getElementById('cc-annfee').value,feedate:document.getElementById('cc-feedate').value,feepaid:document.getElementById('cc-feepaid').value,cutoff:document.getElementById('cc-cutoff').value,dueday:document.getElementById('cc-dueday').value,notes:document.getElementById('cc-notes').value.trim()};
+  if(ccEditId){const c=CC.find(x=>x.id===ccEditId);if(c){fbSet('creditcards',{...c,...data});log('Updated','[Card] '+name);toast('Updated.','success');}}else{data.id=UID();data.created=new Date().toISOString();fbSet('creditcards',data);log('Created','[Card] '+name);toast('Added.','success');}closeCCModal();
+}
+function delCC(id){const c=CC.find(x=>x.id===id);if(!c)return;if(!confirm('Delete "'+c.name+'"?'))return;fbDel('creditcards',id);log('Deleted','[Card] '+c.name);toast('Deleted.','info');}
+function viewCCDet(id){const c=CC.find(x=>x.id===id);if(!c)return;const se=status(c.expiry),sf=c.feedate?status(c.feedate):null;document.getElementById('ccd-ttl').textContent=c.name;document.getElementById('ccd-body').innerHTML=`<div style="margin-bottom:14px"><div class="ds-title">Card Info</div><div class="ds-row"><div class="ds-key">Card Name</div><div class="ds-val">${c.name}</div></div><div class="ds-row"><div class="ds-key">Bank</div><div class="ds-val">${c.bank}</div></div><div class="ds-row"><div class="ds-key">Cardholder</div><div class="ds-val">${c.holder||'—'}</div></div><div class="ds-row"><div class="ds-key">Card Number</div><div class="ds-val" style="font-family:monospace">**** **** **** ${c.last4||'????'}</div></div><div class="ds-row"><div class="ds-key">Credit Limit</div><div class="ds-val">${c.limit?'&#8369;'+parseFloat(c.limit).toLocaleString():'—'}</div></div></div><div style="margin-bottom:14px"><div class="ds-title">Expiry & Fees</div><div class="ds-row"><div class="ds-key">Card Expiry</div><div class="ds-val">${c.expiry} <span class="badge ${se.cls}">${se.label}</span></div></div><div class="ds-row"><div class="ds-key">Annual Fee</div><div class="ds-val">${c.annfee?'&#8369;'+parseFloat(c.annfee).toLocaleString():'—'}</div></div><div class="ds-row"><div class="ds-key">Fee Renewal</div><div class="ds-val">${c.feedate||'—'}${sf?` <span class="badge ${sf.cls}">${sf.label}</span>`:''}</div></div><div class="ds-row"><div class="ds-key">Fee Paid</div><div class="ds-val">${c.feepaid||'—'}</div></div><div class="ds-row"><div class="ds-key">Cut-off</div><div class="ds-val">${c.cutoff?'Every '+c.cutoff+'th':'—'}</div></div><div class="ds-row"><div class="ds-key">Due Day</div><div class="ds-val">${c.dueday?'Every '+c.dueday+'th':'—'}</div></div></div>${c.notes?`<div><div class="ds-title">Notes</div><div style="font-size:12px;color:var(--text2)">${c.notes}</div></div>`:''}`;document.getElementById('ccd-foot').innerHTML=`<button class="btn btn-s btn-xs" onclick="closeCCDet()">Close</button><button class="btn btn-p btn-xs" onclick="closeCCDet();openEditCC('${id}')">&#9998; Edit</button>`;document.getElementById('cc-detail-bg').style.display='flex';}
+function closeCCDet(){document.getElementById('cc-detail-bg').style.display='none';}
+window.openAddCC=openAddCC;window.openEditCC=openEditCC;window.closeCCModal=closeCCModal;window.saveCCRecord=saveCCRecord;window.delCC=delCC;window.viewCCDet=viewCCDet;window.closeCCDet=closeCCDet;
+
+// ── SUBSCRIPTIONS ─────────────────────────────────────────────
+function setSF(cat){document.getElementById('sub-flt-cat').value=cat;renderSubscriptions();}window.setSF=setSF;
+function setSubView(v,el){subView=v;document.querySelectorAll('#page-subscriptions .vt').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');renderSubscriptions();}window.setSubView=setSubView;
+function getSubFiltered(){const q=(document.getElementById('sub-srch').value||'').toLowerCase(),cat=document.getElementById('sub-flt-cat').value,cycle=document.getElementById('sub-flt-cycle').value,st=document.getElementById('sub-flt-st').value;return SUB.filter(s=>{return(!q||(s.name+(s.vendor||'')+(s.cat||'')).toLowerCase().includes(q))&&(!cat||s.cat===cat)&&(!cycle||s.cycle===cycle)&&(!st||status(s.expiry).type===st);});}
+function renderSubscriptions(){
+  const data=getSubFiltered();
+  const allCats=[...new Set([...(S.subcats||[]),...SUB.map(s=>s.cat).filter(Boolean)])].sort();
+  const sf=document.getElementById('sub-flt-cat');if(sf){const cur=sf.value;sf.innerHTML='<option value="">All Categories</option>';allCats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sf.appendChild(o);});sf.value=cur;}
+  const dl=document.getElementById('sub-cat-list');if(dl)dl.innerHTML=allCats.map(c=>`<option value="${c}">`).join('');
+  let exp=0,w7=0,w30=0,act=0;SUB.forEach(s=>{const st=status(s.expiry);if(st.type==='expired')exp++;else if(st.type==='warn7')w7++;else if(st.type==='warn30')w30++;else act++;});
+  const totalMonthly=SUB.reduce((sum,s)=>{const c=parseFloat(s.cost)||0,m=CYC_MONTHS[s.cycle]||12;return sum+(c/m);},0);
+  document.getElementById('sub-stats').innerHTML=`<div class="sc sc-accent"><div class="sc-label">Total</div><div class="sc-val">${SUB.length}</div></div><div class="sc sc-red"><div class="sc-label">Needs Attention</div><div class="sc-val">${exp+w7}</div></div><div class="sc sc-orange"><div class="sc-label">Monthly Cost</div><div class="sc-val" style="font-size:18px">&#8369;${Math.round(totalMonthly).toLocaleString()}</div></div><div class="sc sc-green2"><div class="sc-label">Annual Cost</div><div class="sc-val" style="font-size:18px">&#8369;${Math.round(totalMonthly*12).toLocaleString()}</div></div>`;
+  if(subView==='cards')renderSubCards(data);else renderSubTable(data);
+}
+function renderSubCards(data){
+  if(!data.length){document.getElementById('sub-view').innerHTML='<div class="empty">No subscriptions found.</div>';return;}
+  const fmt=v=>'&#8369;'+parseFloat(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  let h='<div class="sub-grid">';
+  data.forEach(s=>{const st=status(s.expiry);h+=`<div class="sub-card ${st.type}" onclick="viewSubDet('${s.id}')"><div class="sub-vendor">${s.vendor||s.cat||'Subscription'}</div><div class="sub-name">${s.name}</div><div class="sub-price">${s.cost?fmt(s.cost):'—'}<span> / ${s.cycle}</span></div><div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><span class="badge ${st.cls}">${st.label}</span><span class="sub-cycle-badge">${s.cycle}</span>${s.auto==='Yes'?'<span class="badge b-blue" style="font-size:9px">Auto</span>':''}</div><div style="font-size:10px;color:var(--text3)">Next: <span style="font-family:monospace">${s.expiry}</span></div><div class="sub-actions"><button class="act-btn a-edit" onclick="event.stopPropagation();openEditSub('${s.id}')">&#9998;</button>${s.link?`<button class="act-btn" style="background:var(--blue-bg);color:var(--blue)" onclick="event.stopPropagation();window.open('${s.link}','_blank')">&#8599; Portal</button>`:''}<button class="act-btn a-renew" onclick="event.stopPropagation();doRenewSub('${s.id}')">&#8635;</button><button class="act-btn a-del" onclick="event.stopPropagation();delSub('${s.id}')">&#10005;</button></div></div>`;});
+  h+='</div>';document.getElementById('sub-view').innerHTML=h;
+}
+function renderSubTable(data){
+  const fmt=v=>v?'&#8369;'+parseFloat(v).toLocaleString():'—';
+  let h='<div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Vendor</th><th>Category</th><th>Cycle</th><th>Cost</th><th>Next Renewal</th><th>Status</th><th>Auto</th><th>Actions</th></tr></thead><tbody>';
+  if(!data.length)h+='<tr><td colspan="9" class="empty">No subscriptions.</td></tr>';
+  data.forEach(s=>{const st=status(s.expiry);h+=`<tr><td style="font-weight:500">${s.name}</td><td style="font-size:11px;color:var(--text2)">${s.vendor||'—'}</td><td><span class="badge b-gray" style="font-size:9px">${s.cat||'—'}</span></td><td><span class="sub-cycle-badge">${s.cycle}</span></td><td style="font-size:11px">${fmt(s.cost)}</td><td style="font-family:monospace;font-size:11px">${s.expiry}</td><td><span class="badge ${st.cls}">${st.label}</span></td><td><span class="badge ${s.auto==='Yes'?'b-blue':'b-gray'}" style="font-size:9px">${s.auto==='Yes'?'Auto':'Manual'}</span></td><td><div style="display:flex;gap:3px"><button class="act-btn a-view" onclick="viewSubDet('${s.id}')">Detail</button><button class="act-btn a-renew" onclick="doRenewSub('${s.id}')">&#8635;</button><button class="act-btn a-edit" onclick="openEditSub('${s.id}')">&#9998;</button>${s.link?`<button class="act-btn" style="background:var(--blue-bg);color:var(--blue)" onclick="window.open('${s.link}','_blank')">&#8599;</button>`:''}<button class="act-btn a-del" onclick="delSub('${s.id}')">&#10005;</button></div></td></tr>`;});
+  h+='</tbody></table></div>';document.getElementById('sub-view').innerHTML=h;
+}
+function openAddSub(){subEditId=null;document.getElementById('sub-modal-ttl').textContent='Add Subscription';clearSubForm();populateSubSelects();document.getElementById('sub-modal-bg').style.display='flex';}
+function openEditSub(id){subEditId=id;const s=SUB.find(x=>x.id===id);if(!s)return;document.getElementById('sub-modal-ttl').textContent='Edit Subscription';document.getElementById('sub-name').value=s.name||'';document.getElementById('sub-vendor').value=s.vendor||'';document.getElementById('sub-cat').value=s.cat||'';document.getElementById('sub-seats').value=s.seats||'';document.getElementById('sub-cycle').value=s.cycle||'Yearly';document.getElementById('sub-cost').value=s.cost||'';document.getElementById('sub-start').value=s.start||'';document.getElementById('sub-expiry').value=s.expiry||'';document.getElementById('sub-paid').value=s.paid||'No';document.getElementById('sub-auto').value=s.auto||'Yes';document.getElementById('sub-email').value=s.email||'';document.getElementById('sub-ref').value=s.ref||'';document.getElementById('sub-link').value=s.link||'';document.getElementById('sub-notes').value=s.notes||'';populateSubSelects();setTimeout(()=>{document.getElementById('sub-entity').value=s.entity||'';document.getElementById('sub-dept').value=s.dept||'';},30);document.getElementById('sub-modal-bg').style.display='flex';}
+function clearSubForm(){['sub-name','sub-vendor','sub-seats','sub-cost','sub-start','sub-expiry','sub-email','sub-ref','sub-link','sub-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('sub-cat').value='';document.getElementById('sub-cycle').value='Yearly';document.getElementById('sub-paid').value='No';document.getElementById('sub-auto').value='Yes';}
+function populateSubSelects(){const es=document.getElementById('sub-entity'),ds=document.getElementById('sub-dept');if(es){es.innerHTML='<option value="">— Select entity —</option>';(S.entities||[]).forEach(e=>{const o=document.createElement('option');o.value=e;o.textContent=e;es.appendChild(o);});}if(ds){ds.innerHTML='<option value="">— Select department —</option>';(S.depts||[]).forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;ds.appendChild(o);});}renderSubCatList();}
+function closeSubModal(){document.getElementById('sub-modal-bg').style.display='none';subEditId=null;}
+function saveSub(){
+  const name=document.getElementById('sub-name').value.trim(),expiry=document.getElementById('sub-expiry').value;
+  if(!name||!expiry){if(!name)document.getElementById('sub-name').classList.add('invalid');if(!expiry)document.getElementById('sub-expiry').classList.add('invalid');toast('Name and Next Renewal Date are required.','error');return;}
+  const data={name,vendor:document.getElementById('sub-vendor').value.trim(),cat:document.getElementById('sub-cat').value.trim(),entity:document.getElementById('sub-entity').value,dept:document.getElementById('sub-dept').value,seats:document.getElementById('sub-seats').value,cycle:document.getElementById('sub-cycle').value,cost:document.getElementById('sub-cost').value,start:document.getElementById('sub-start').value,expiry,paid:document.getElementById('sub-paid').value,auto:document.getElementById('sub-auto').value,email:document.getElementById('sub-email').value.trim(),ref:document.getElementById('sub-ref').value.trim(),link:document.getElementById('sub-link').value.trim(),notes:document.getElementById('sub-notes').value.trim()};
+  if(subEditId){const s=SUB.find(x=>x.id===subEditId);if(s){fbSet('subscriptions',{...s,...data});log('Updated','[Sub] '+name);toast('Updated.','success');}}else{data.id=UID();data.created=new Date().toISOString();fbSet('subscriptions',data);log('Created','[Sub] '+name);toast('Added.','success');}closeSubModal();
+}
+function doRenewSub(id){const s=SUB.find(x=>x.id===id);if(!s)return;const m=CYC_MONTHS[s.cycle]||12,nd=new Date(s.expiry);nd.setMonth(nd.getMonth()+m);const ne=nd.toISOString().split('T')[0];fbSet('subscriptions',{...s,start:s.expiry,expiry:ne,paid:'No'});log('Renewed','[Sub] '+s.name+' → '+ne);toast('Renewed → '+ne,'success');}
+function delSub(id){const s=SUB.find(x=>x.id===id);if(!s)return;if(!confirm('Delete "'+s.name+'"?'))return;fbDel('subscriptions',id);log('Deleted','[Sub] '+s.name);toast('Deleted.','info');}
+function viewSubDet(id){const s=SUB.find(x=>x.id===id);if(!s)return;const st=status(s.expiry),fmt=v=>v?'&#8369;'+parseFloat(v).toLocaleString(undefined,{minimumFractionDigits:2}):'—';document.getElementById('subd-ttl').textContent=s.name;document.getElementById('subd-body').innerHTML=`<div style="margin-bottom:14px"><div class="ds-title">Subscription</div><div class="ds-row"><div class="ds-key">Name</div><div class="ds-val">${s.name}</div></div><div class="ds-row"><div class="ds-key">Vendor</div><div class="ds-val">${s.vendor||'—'}</div></div><div class="ds-row"><div class="ds-key">Category</div><div class="ds-val">${s.cat||'—'}</div></div><div class="ds-row"><div class="ds-key">Seats</div><div class="ds-val">${s.seats||'—'}</div></div><div class="ds-row"><div class="ds-key">Account Email</div><div class="ds-val">${s.email||'—'}</div></div></div><div style="margin-bottom:14px"><div class="ds-title">Billing</div><div class="ds-row"><div class="ds-key">Cycle</div><div class="ds-val">${s.cycle}</div></div><div class="ds-row"><div class="ds-key">Cost</div><div class="ds-val">${fmt(s.cost)}</div></div><div class="ds-row"><div class="ds-key">Next Renewal</div><div class="ds-val">${s.expiry} <span class="badge ${st.cls}">${st.label}</span></div></div><div class="ds-row"><div class="ds-key">Paid</div><div class="ds-val">${s.paid}</div></div><div class="ds-row"><div class="ds-key">Auto-renews</div><div class="ds-val">${s.auto==='Yes'?'Yes':'No'}</div></div>${s.link?`<div class="ds-row"><div class="ds-key">Portal</div><div class="ds-val"><a href="${s.link}" target="_blank" style="color:var(--accent);font-size:12px;text-decoration:none;font-weight:500">${s.link.replace(/^https?:\/\//,'').replace(/\/.*$/,'')} &#8599;</a></div></div>`:''}</div>${s.notes?`<div><div class="ds-title">Notes</div><div style="font-size:12px;color:var(--text2)">${s.notes}</div></div>`:''}`;document.getElementById('subd-foot').innerHTML=`<button class="btn btn-s btn-xs" onclick="closeSubDet()">Close</button><button class="btn btn-s btn-xs" onclick="closeSubDet();openEditSub('${id}')">&#9998; Edit</button><button class="btn btn-p btn-xs" onclick="closeSubDet();doRenewSub('${id}')">&#8635; Renew</button>${s.link?`<button class="btn btn-s btn-xs" onclick="window.open('${s.link}','_blank')" style="color:var(--blue)">&#8599; Portal</button>`:''}`;document.getElementById('sub-detail-bg').style.display='flex';}
+function closeSubDet(){document.getElementById('sub-detail-bg').style.display='none';}
+window.openAddSub=openAddSub;window.openEditSub=openEditSub;window.closeSubModal=closeSubModal;window.saveSub=saveSub;window.doRenewSub=doRenewSub;window.delSub=delSub;window.viewSubDet=viewSubDet;window.closeSubDet=closeSubDet;
+
+// ── IMPORT / EXPORT ───────────────────────────────────────────
+function exportCSV(){const hdr='Title,Category,Entity,Department,UnitCode,StartDate,ExpiryDate,Cycle,Cost,Paid,RefNo,Agency,Status,Notes';const rows=R.map(r=>[r.title,r.cat,r.entity||'',r.dept||'',r.unit||'',r.start||'',r.expiry,r.cycle,r.cost||'',r.paid,r.ref||'',r.agency||'',status(r.expiry).label,(r.notes||'').replace(/,/g,';')].join(','));const blob=new Blob([[hdr,...rows].join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='renewals-'+new Date().toISOString().split('T')[0]+'.csv';a.click();log('Exported','CSV');toast('CSV downloaded.','success');}
+function exportBackup(){const blob=new Blob([JSON.stringify({renewals:R,agency:EMP,health:HI,creditcards:CC,subscriptions:SUB,audit:A,settings:S},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='renewaldesk-backup-'+new Date().toISOString().split('T')[0]+'.json';a.click();log('Exported','JSON backup');toast('Backup downloaded.','success');}
+function importCSV(input){const f=input.files[0];if(!f)return;const reader=new FileReader();reader.onload=e=>{const lines=e.target.result.split('\n').filter(l=>l.trim());if(lines.length<2){document.getElementById('import-msg').innerHTML='<div style="color:var(--red);font-size:12px">No data rows found.</div>';return;}const hdrs=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/[^a-z]/g,''));const get=(cols,key)=>{const i=hdrs.indexOf(key);return i>=0?(cols[i]||'').trim().replace(/^"|"$/g,''):''};let added=0,skipped=0;const batch=[];lines.slice(1).forEach(line=>{const cols=line.split(','),title=get(cols,'title'),expiry=get(cols,'expirydate')||get(cols,'expiry');if(!title||!expiry){skipped++;return;}batch.push({id:UID(),title,cat:get(cols,'category')||'Custom',entity:get(cols,'entity')||'',dept:get(cols,'department')||'',start:get(cols,'startdate')||'',expiry,cycle:get(cols,'cycle')||'Yearly',cost:get(cols,'cost')||'',paid:get(cols,'paid')||'No',ref:get(cols,'refno')||'',unit:get(cols,'unitcode')||'',agency:get(cols,'agency')||'',notes:get(cols,'notes')||'',created:new Date().toISOString(),history:[{date:new Date().toISOString(),action:'Imported',expiry}]});added++;});fbBulk('renewals',batch);log('Imported',added+' records from '+f.name);document.getElementById('import-msg').innerHTML=`<div style="background:var(--green-bg);color:var(--green);border-radius:var(--r);padding:8px 12px;font-size:12px;border:1px solid var(--green-border)">Imported ${added} records.${skipped?' '+skipped+' skipped.':''}</div>`;toast('Imported '+added+' records.','success');input.value='';};reader.readAsText(f);}
+function clearAll(){if(!confirm('Clear ALL data from Firebase?'))return;[...R].forEach(r=>fbDel('renewals',r.id));[...EMP].forEach(e=>fbDel('agency',e.id));[...HI].forEach(h=>fbDel('health',h.id));[...CC].forEach(c=>fbDel('creditcards',c.id));[...SUB].forEach(s=>fbDel('subscriptions',s.id));toast('All data cleared.','warn');}
+window.exportCSV=exportCSV;window.exportBackup=exportBackup;window.importCSV=importCSV;window.clearAll=clearAll;
+
+// ── EXPIRY POPUP ──────────────────────────────────────────────
+function showPopup(){const al=R.filter(r=>status(r.expiry).type!=='active').sort((a,b)=>new Date(a.expiry)-new Date(b.expiry));if(!al.length)return;document.getElementById('pop-ttl').textContent=al.length+' renewal'+(al.length>1?'s':'')+' need attention';const exp=R.filter(r=>status(r.expiry).type==='expired').length,w7c=R.filter(r=>status(r.expiry).type==='warn7').length;document.getElementById('pop-sub').textContent=exp+' expired · '+w7c+' expiring within 7 days';let h='';al.slice(0,7).forEach(r=>{const s=status(r.expiry);h+=`<div class="pi"><div><div style="font-weight:500;color:var(--text)">${r.title}</div><div style="font-size:10px;color:var(--text3)">${r.cat}${r.entity?' · '+r.entity:''} · ${r.expiry}</div></div><span class="badge ${s.cls}">${s.label}</span></div>`;});document.getElementById('pop-list').innerHTML=h;document.getElementById('popup-bg').style.display='flex';}
+function closePopup(){document.getElementById('popup-bg').style.display='none';}
+window.showPopup=showPopup;window.closePopup=closePopup;
+
+// ── TELEGRAM ALERTS ───────────────────────────────────────────
+const TG_TOKEN = '8720953003:AAFRSEUTfLN6AbdkscsWmatWkFWnPKTf0AM';
+const TG_CHAT  = '-5147887666';
+const TG_KEY   = 'rd3_tg_last_sent';
+
+async function sendTelegram(message){
+  try{
+    const url=`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
+    await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text:message,parse_mode:'HTML'})});
+  }catch(e){console.error('Telegram error',e);}
+}
+
+function checkAndSendAlerts(){
+  // Only send once per day per device
+  const today=new Date().toISOString().split('T')[0];
+  const lastSent=localStorage.getItem(TG_KEY);
+  if(lastSent===today)return;
+
+  const expired=R.filter(r=>status(r.expiry).type==='expired');
+  const warn7=R.filter(r=>status(r.expiry).type==='warn7');
+  const warn30=R.filter(r=>status(r.expiry).type==='warn30');
+
+  if(!expired.length&&!warn7.length&&!warn30.length)return;
+
+  const now=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  let msg=`🔔 <b>Renewal Desk — SA Tech</b>\n📅 ${now}\n\n`;
+
+  if(expired.length){
+    msg+=`🔴 <b>EXPIRED (${expired.length})</b>\n`;
+    expired.slice(0,5).forEach(r=>{msg+=`• ${r.title}${r.entity?' ['+r.entity+']':''} — <b>${r.expiry}</b>\n`;});
+    if(expired.length>5)msg+=`  ...and ${expired.length-5} more\n`;
+    msg+='\n';
+  }
+
+  if(warn7.length){
+    msg+=`🟠 <b>EXPIRING IN 7 DAYS (${warn7.length})</b>\n`;
+    warn7.slice(0,5).forEach(r=>{const s=status(r.expiry);msg+=`• ${r.title}${r.entity?' ['+r.entity+']':''} — <b>${r.expiry}</b> (${s.label})\n`;});
+    if(warn7.length>5)msg+=`  ...and ${warn7.length-5} more\n`;
+    msg+='\n';
+  }
+
+  if(warn30.length){
+    msg+=`🟡 <b>EXPIRING IN 30 DAYS (${warn30.length})</b>\n`;
+    warn30.slice(0,5).forEach(r=>{const s=status(r.expiry);msg+=`• ${r.title}${r.entity?' ['+r.entity+']':''} — <b>${r.expiry}</b> (${s.label})\n`;});
+    if(warn30.length>5)msg+=`  ...and ${warn30.length-5} more\n`;
+    msg+='\n';
+  }
+
+  msg+=`🔗 <a href="https://markanthonymanio061302-pixel.github.io/Renewal-Desk---SA-Tech/">Open Renewal Desk</a>`;
+
+  sendTelegram(msg);
+  localStorage.setItem(TG_KEY,today);
+  console.log('Telegram alert sent for',today);
+}
+
+// Manual test button function
+async function testTelegramAlert(){
+  const msg=`✅ <b>Renewal Desk — SA Tech</b>\n\nTelegram alerts are working correctly!\n🔗 <a href="https://markanthonymanio061302-pixel.github.io/Renewal-Desk---SA-Tech/">Open Renewal Desk</a>`;
+  await sendTelegram(msg);
+  toast('Test alert sent to Telegram!','success');
+}
+window.testTelegramAlert=testTelegramAlert;
+
+// Reset daily send (for testing)
+function resetTgDaily(){localStorage.removeItem(TG_KEY);toast('Alert reset — will send again on next load.','info');}
+window.resetTgDaily=resetTgDaily;
+
+// ── INIT ──────────────────────────────────────────────────────
+populateSelects();
+renderSubCatList();
+requestNotifPermission();
+startListeners();
+setTimeout(()=>{if(R.length>0)showPopup();},3000);
+// Run alert check 5 seconds after data loads
+setTimeout(()=>checkAndSendAlerts(),5000);
+
+</script>
+
+
+</body>
+</html>
